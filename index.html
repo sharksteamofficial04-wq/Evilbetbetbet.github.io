@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -16,9 +17,9 @@
         }
 
         :root {
-            --primary-color: #ff3333; /* Яркий красный */
-            --primary-hover: #cc0000; /* Темнее для ховера */
-            --secondary-color: #ff6666; /* Светлее для акцентов */
+            --primary-color: #ff3333;
+            --primary-hover: #cc0000;
+            --secondary-color: #ff6666;
         }
 
         * {
@@ -38,9 +39,8 @@
             letter-spacing: 1px;
         }
 
-        /* TG Web App Integration */
         .tg-ready {
-            padding-top: 60px; /* Adjust for fixed header */
+            padding-top: 60px;
         }
 
         header {
@@ -970,6 +970,28 @@
             transform: translateX(100%);
         }
 
+        .coupon-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .coupon-close:hover {
+            background: var(--primary-color);
+        }
+
         .coupon-tabs {
             display: flex;
             justify-content: space-between;
@@ -1573,7 +1595,7 @@
             </section>
 
             <section class="matches-section">
-                <h2 class="section-title">КИБЕРСПОРТ МАТЧИ</h2>
+                <h2 class="section-title">ТОП СОБЫТИЯ</h2>
                 <div class="date-navigation">
                     <div class="date-title">СЕГОДНЯ, 11 СЕНТЯБРЯ</div>
                     <div class="date-arrows">
@@ -1745,6 +1767,7 @@
             </section>
 
             <div class="bet-coupon" id="betCoupon">
+                <button class="coupon-close" onclick="closeCoupon()">&times;</button>
                 <div class="coupon-tabs">
                     <button class="coupon-tab active" data-tab="bets">Ставки</button>
                     <button class="coupon-tab" data-tab="history">История</button>
@@ -1914,16 +1937,9 @@
                 console.log('Telegram Web App detected');
                 TelegramWebApp.ready();
                 TelegramWebApp.expand();
-                
-                // Автоматическая авторизация
-                if (TelegramWebApp.initDataUnsafe?.user) {
-                    console.log('Auto-login with Telegram user:', TelegramWebApp.initDataUnsafe.user);
-                    autoLoginWithTelegram(TelegramWebApp.initDataUnsafe.user);
-                }
-                
                 document.body.style.background = TelegramWebApp.themeParams.bg_color || 'linear-gradient(135deg, #0c0c0c, #1a1a1a)';
                 document.getElementById('notInTelegram').style.display = 'none';
-                document.getElementById('connectTgBtn').style.display = 'none';
+                document.getElementById('connectTgBtn').style.display = 'inline-block';
             } else {
                 console.warn('Not running in Telegram Web App');
                 document.getElementById('notInTelegram').style.display = 'flex';
@@ -2012,7 +2028,6 @@
             });
 
             // Обработка уведомлений
-            
             document.querySelector('.notifications-btn').addEventListener('click', () => {
                 console.log('Notifications button clicked');
                 showNotification('Уведомления пока недоступны');
@@ -2023,33 +2038,24 @@
         }
 
         // Функции авторизации
-        function autoLoginWithTelegram(user) {
-            console.log('Attempting auto-login with Telegram user:', user);
-            if (user && user.id) {
-                isLoggedIn = true;
-                currentUser = {
-                    id: user.id,
-                    username: user.username || user.first_name || 'User_' + user.id,
-                    firstName: user.first_name || '',
-                    lastName: user.last_name || ''
-                };
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                updateAuthUI();
-                updateBalance();
-                showNotification(`Добро пожаловать, ${currentUser.username}!`);
-            } else {
-                console.warn('Invalid Telegram user data');
-                showNotification('Ошибка авторизации. Попробуйте снова.');
-            }
-        }
-
         function connectTelegram() {
             console.log('Connecting to Telegram');
             if (TelegramWebApp) {
                 TelegramWebApp.ready();
                 if (TelegramWebApp.initDataUnsafe?.user) {
-                    autoLoginWithTelegram(TelegramWebApp.initDataUnsafe.user);
+                    const user = TelegramWebApp.initDataUnsafe.user;
+                    isLoggedIn = true;
+                    currentUser = {
+                        id: user.id,
+                        username: user.username || user.first_name || 'User_' + user.id,
+                        firstName: user.first_name || '',
+                        lastName: user.last_name || ''
+                    };
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateAuthUI();
+                    updateBalance();
+                    showNotification(`Добро пожаловать, ${currentUser.username}!`);
                     hideModal('login');
                     hideModal('register');
                 } else {
@@ -2146,6 +2152,11 @@
             if (couponItems.length > 0) {
                 document.getElementById('betCoupon').classList.add('visible');
             }
+        }
+
+        function closeCoupon() {
+            console.log('Closing coupon');
+            document.getElementById('betCoupon').classList.remove('visible');
         }
 
         function addToCoupon(event, bet, odds, matchId) {
@@ -2452,4 +2463,3 @@
     </script>
 </body>
 </html>
-```
