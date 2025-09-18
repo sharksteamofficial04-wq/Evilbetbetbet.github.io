@@ -6,6 +6,7 @@
     <title>EVILBET</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preload" href="https://fonts.gstatic.com/s/bebasneue/v9/JTUSjIg69CK48gW7PXoo9Wlhyw.woff2" as="font" type="font/woff2" crossorigin>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         @font-face {
             font-family: 'Bebas Neue Cyrillic';
@@ -120,6 +121,64 @@
             font-weight: 400;
         }
 
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-btn {
+            padding: 6px 12px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .login-btn {
+            background: #333;
+            color: #fff;
+        }
+
+        .login-btn:hover {
+            background: #444;
+        }
+
+        .register-btn {
+            background: #ff3333;
+            color: #fff;
+        }
+
+        .register-btn:hover {
+            background: #ff5555;
+        }
+
+        .telegram-auth-btn {
+            background: #0088cc;
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        
+        .telegram-auth-btn:hover {
+            background: #006699;
+        }
+        
+        .telegram-icon {
+            font-size: 1.4rem;
+        }
+
         .notifications {
             position: relative;
         }
@@ -212,7 +271,7 @@
             width: 90%;
             color: #fff;
             max-height: 80vh;
-            overflow-y: hidden;
+            overflow-y: auto;
         }
 
         .modal-header {
@@ -227,6 +286,43 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+        }
+
+        .auth-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 12px;
+            color: #fff;
+            font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
+            font-size: 1.1rem;
+            width: 100%;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: #ff3333;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .auth-link {
+            color: #ff3333;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .auth-link:hover {
+            color: #ff5555;
         }
 
         .deposit-methods {
@@ -265,6 +361,7 @@
 
         .deposit-amount label {
             font-size: 1.1rem;
+            color: #aaa;
         }
 
         .deposit-amount input {
@@ -310,6 +407,7 @@
             max-width: 80%;
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 0.9rem;
+            line-height: 1.4;
         }
 
         .chat-message.user {
@@ -336,6 +434,7 @@
         .chat-input-container {
             display: flex;
             gap: 10px;
+            margin-top: 10px;
         }
 
         .chat-input {
@@ -347,6 +446,13 @@
             color: #fff;
             font-size: 1rem;
             resize: none;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 60px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border: 1px solid #ff3333;
         }
 
         .chat-send-btn {
@@ -357,6 +463,8 @@
             padding: 10px 15px;
             cursor: pointer;
             font-size: 1rem;
+            align-self: flex-end;
+            height: 60px;
         }
 
         .chat-send-btn:hover {
@@ -373,6 +481,7 @@
             cursor: pointer;
             width: 100%;
             margin-bottom: 10px;
+            transition: background 0.3s;
         }
 
         .modal-button:hover {
@@ -388,10 +497,11 @@
             font-size: 1.2rem;
             cursor: pointer;
             width: 100%;
+            transition: background 0.3s;
         }
 
         .modal-close:hover {
-            background: #ff3333;
+            background: #444;
         }
 
         .main-container {
@@ -416,11 +526,13 @@
         .banner h1 {
             font-size: 2.8rem;
             margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .banner p {
             font-size: 1.8rem;
             margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .banner .telegram-btn {
@@ -432,6 +544,7 @@
             font-size: 1.3rem;
             cursor: pointer;
             transition: background 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .banner .telegram-btn:hover {
@@ -441,6 +554,7 @@
         .banner img {
             position: absolute;
             bottom: -10px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
         }
 
         .banner .player-left {
@@ -459,6 +573,7 @@
             padding: 20px;
             margin-top: 20px;
             grid-column: 1 / 2;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .section-title {
@@ -467,6 +582,7 @@
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 1px solid #333;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .date-navigation {
@@ -481,6 +597,7 @@
         .date-title {
             font-size: 1.5rem;
             color: #fff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .date-arrows {
@@ -517,13 +634,14 @@
             padding: 25px;
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .match-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(255, 51, 51, 0.2);
+            box-shadow: 0 8px 20px rgba(255, 51, 51, 0.3);
         }
 
         .match-header {
@@ -539,11 +657,13 @@
             background: rgba(0, 0, 0, 0.3);
             padding: 5px 10px;
             border-radius: 4px;
+            font-weight: bold;
         }
 
         .match-league {
             font-size: 1rem;
             color: #aaa;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .match-teams {
@@ -579,11 +699,13 @@
             justify-content: center;
             font-size: 1.4rem;
             border: 2px solid #444;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .team-name {
             font-size: 1.4rem;
             text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .match-vs {
@@ -591,6 +713,7 @@
             color: #aaa;
             width: 10%;
             text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .match-odds {
@@ -606,27 +729,32 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .odds-item:hover {
             background: #ff3333;
             transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(255, 51, 51, 0.3);
         }
 
         .odds-item.selected {
             background: #ff3333;
-            box-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
+            transform: scale(1.05);
         }
 
         .odds-type {
             font-size: 1rem;
             color: #aaa;
             margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .odds-value {
             font-size: 1.4rem;
             font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .promo-banners {
@@ -647,23 +775,26 @@
             min-height: 180px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
         .promo-banner .text-content {
             text-align: left;
             padding: 10px;
             flex: 1;
+            z-index: 2;
         }
 
         .promo-banner h1 {
             font-size: 2rem;
             margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .promo-banner p {
             font-size: 1.5rem;
             margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .promo-banner .telegram-btn {
@@ -675,6 +806,7 @@
             font-size: 1.2rem;
             cursor: pointer;
             transition: background 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .promo-banner .telegram-btn:hover {
@@ -687,10 +819,12 @@
             position: absolute;
             right: 10px;
             bottom: -10px;
+            z-index: 1;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
         }
 
         .bet-coupon {
-            background: rgba(30, 30, 30, 0.9);
+            background: rgba(30, 30, 30, 0.95);
             border-radius: 8px;
             padding: 20px;
             position: fixed;
@@ -703,6 +837,8 @@
             display: none;
             opacity: 0;
             transition: opacity 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
         }
 
         .bet-coupon.visible {
@@ -714,6 +850,7 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 15px;
+            gap: 5px;
         }
 
         .coupon-tab {
@@ -727,7 +864,7 @@
             font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
             font-size: 1rem;
             text-align: center;
-            margin-right: 5px;
+            transition: background 0.3s;
         }
 
         .coupon-tab:last-child {
@@ -736,6 +873,10 @@
 
         .coupon-tab.active {
             background: #ff3333;
+        }
+
+        .coupon-tab:hover {
+            background: #444;
         }
 
         .coupon-header {
@@ -750,6 +891,7 @@
         .coupon-title {
             font-size: 1.5rem;
             color: #ff3333;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .clear-coupon {
@@ -761,6 +903,7 @@
             cursor: pointer;
             font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
             font-size: 1rem;
+            transition: background 0.3s;
         }
 
         .clear-coupon:hover {
@@ -773,21 +916,29 @@
             overflow-y: auto;
         }
 
-        .coupon-history::-webkit-scrollbar, .modal-body::-webkit-scrollbar {
+        .coupon-items::-webkit-scrollbar,
+        .coupon-history::-webkit-scrollbar,
+        .modal-body::-webkit-scrollbar {
             width: 8px;
         }
 
-        .coupon-history::-webkit-scrollbar-track, .modal-body::-webkit-scrollbar-track {
+        .coupon-items::-webkit-scrollbar-track,
+        .coupon-history::-webkit-scrollbar-track,
+        .modal-body::-webkit-scrollbar-track {
             background: #222;
             border-radius: 4px;
         }
 
-        .coupon-history::-webkit-scrollbar-thumb, .modal-body::-webkit-scrollbar-thumb {
+        .coupon-items::-webkit-scrollbar-thumb,
+        .coupon-history::-webkit-scrollbar-thumb,
+        .modal-body::-webkit-scrollbar-thumb {
             background: #ff3333;
             border-radius: 4px;
         }
 
-        .coupon-history::-webkit-scrollbar-thumb:hover, .modal-body::-webkit-scrollbar-thumb:hover {
+        .coupon-items::-webkit-scrollbar-thumb:hover,
+        .coupon-history::-webkit-scrollbar-thumb:hover,
+        .modal-body::-webkit-scrollbar-thumb:hover {
             background: #ff5555;
         }
 
@@ -798,12 +949,14 @@
             margin-bottom: 10px;
             display: flex;
             flex-direction: column;
+            border: 1px solid #444;
         }
 
         .coupon-event {
             font-size: 1rem;
             margin-bottom: 5px;
             color: #fff;
+            font-weight: bold;
         }
 
         .coupon-bet {
@@ -821,12 +974,25 @@
         .odds-number {
             font-size: 1.1rem;
             color: #ff3333;
+            font-weight: bold;
         }
 
         .remove-bet {
             color: #ff3333;
             cursor: pointer;
             font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        .remove-bet:hover {
+            color: #ff5555;
+        }
+
+        .coupon-empty {
+            font-size: 1rem;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
         }
 
         .coupon-total {
@@ -838,6 +1004,7 @@
         .total-row {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 10px;
         }
 
@@ -849,6 +1016,7 @@
         .total-value {
             font-size: 1.1rem;
             color: #fff;
+            font-weight: bold;
         }
 
         .stake-input {
@@ -861,6 +1029,12 @@
             font-size: 1.1rem;
             width: 100%;
             margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .stake-input:focus {
+            outline: none;
+            border-color: #ff3333;
         }
 
         .place-bet-btn {
@@ -874,6 +1048,7 @@
             cursor: pointer;
             width: 100%;
             transition: background 0.3s;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .place-bet-btn:hover {
@@ -883,6 +1058,7 @@
         .place-bet-btn:disabled {
             background: #555;
             cursor: not-allowed;
+            opacity: 0.7;
         }
 
         .support-button {
@@ -899,14 +1075,14 @@
             color: #fff;
             font-size: 1.5rem;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             z-index: 80;
             transition: all 0.3s;
         }
 
         .support-button:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
         }
 
         #global-notification {
@@ -921,6 +1097,7 @@
             opacity: 0;
             transition: opacity 0.3s;
             max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .not-in-telegram {
@@ -929,18 +1106,20 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 300;
             text-align: center;
+            padding: 20px;
         }
 
         .not-in-telegram p {
             font-size: 1.5rem;
             margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .not-in-telegram a {
@@ -950,6 +1129,11 @@
             color: #fff;
             text-decoration: none;
             font-size: 1.2rem;
+            transition: background 0.3s;
+        }
+
+        .not-in-telegram a:hover {
+            background: #ff5555;
         }
 
         .history-item {
@@ -957,6 +1141,7 @@
             border-radius: 6px;
             padding: 10px;
             margin-bottom: 10px;
+            border: 1px solid #444;
         }
 
         .history-date {
@@ -969,11 +1154,13 @@
             font-size: 1rem;
             color: #fff;
             margin-bottom: 5px;
+            font-weight: bold;
         }
 
         .history-details {
             font-size: 0.9rem;
             color: #aaa;
+            line-height: 1.4;
         }
 
         @media (max-width: 1200px) {
@@ -1132,12 +1319,16 @@
                 </nav>
             </div>
             <div class="header-right">
-                <div class="user-info">
+                <div class="user-info" id="userInfoSection">
                     <div class="balance-item">
                         <div class="balance-label">БАЛАНС</div>
                         <div class="balance-value" id="balanceDisplay">0.00$</div>
                     </div>
                     <div class="user-name" id="userName" onclick="openProfile()">Гость</div>
+                </div>
+                <div class="auth-buttons" id="authButtonsSection">
+                    <button class="auth-btn login-btn" onclick="showModal('login')">Войти</button>
+                    <button class="auth-btn register-btn" onclick="showModal('register')">Регистрация</button>
                 </div>
                 <div class="notifications">
                     <button class="notifications-btn">
@@ -1331,14 +1522,14 @@
                 </div>
             </section>
 
-            <div class="bet-coupon">
+            <div class="bet-coupon" id="betCoupon">
                 <div class="coupon-tabs">
                     <button class="coupon-tab active" data-tab="bets">Ставки</button>
                     <button class="coupon-tab" data-tab="history">История</button>
                 </div>
                 <div class="coupon-header">
                     <div class="coupon-title">КУПОН</div>
-                    <button class="clear-coupon">Очистить</button>
+                    <button class="clear-coupon" onclick="clearCoupon()">Очистить</button>
                 </div>
                 <div class="coupon-items" id="couponItems">
                     <div class="coupon-empty">Выберите события для ставки</div>
@@ -1349,7 +1540,7 @@
                 <div class="coupon-total">
                     <div class="total-row">
                         <div class="total-label">Сумма ставки:</div>
-                        <input type="number" class="stake-input" id="stakeInput" placeholder="0.00" min="1">
+                        <input type="number" class="stake-input" id="stakeInput" placeholder="0.00" min="1" step="0.01">
                     </div>
                     <div class="total-row">
                         <div class="total-label">Коэффициент:</div>
@@ -1359,18 +1550,50 @@
                         <div class="total-label">Выигрыш:</div>
                         <div class="total-value" id="potentialWin">0.00</div>
                     </div>
-                    <button class="place-bet-btn" id="placeBetBtn" disabled>СДЕЛАТЬ СТАВКУ</button>
+                    <button class="place-bet-btn" id="placeBetBtn" onclick="placeBet()" disabled>СДЕЛАТЬ СТАВКУ</button>
                 </div>
             </div>
         </div>
 
-        <div class="support-button">
+        <div class="support-button" onclick="openSupportModal()">
             <i class="fas fa-headset"></i>
         </div>
 
         <div class="not-in-telegram" id="notInTelegram" style="display: none;">
             <p>Пожалуйста, откройте приложение в Telegram!</p>
             <a href="https://t.me/MyEvilBetBot" target="_blank">Открыть в Telegram</a>
+        </div>
+
+        <!-- Модальное окно Входа -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="hideModal('login')">&times;</span>
+                <h2 class="modal-header">Вход через Telegram</h2>
+                <div class="modal-body">
+                    <p style="text-align: center; margin-bottom: 20px;">Для входа необходимо авторизоваться через Telegram</p>
+                    <button class="telegram-auth-btn" onclick="connectTelegram()">
+                        <i class="fab fa-telegram telegram-icon"></i>
+                        Войти через Telegram
+                    </button>
+                </div>
+                <button class="modal-close" onclick="hideModal('login')">Закрыть</button>
+            </div>
+        </div>
+
+        <!-- Модальное окно Регистрации -->
+        <div id="registerModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="hideModal('register')">&times;</span>
+                <h2 class="modal-header">Регистрация через Telegram</h2>
+                <div class="modal-body">
+                    <p style="text-align: center; margin-bottom: 20px;">Для регистрации необходимо подключить Telegram аккаунт</p>
+                    <button class="telegram-auth-btn" onclick="connectTelegram()">
+                        <i class="fab fa-telegram telegram-icon"></i>
+                        Зарегистрироваться через Telegram
+                    </button>
+                </div>
+                <button class="modal-close" onclick="hideModal('register')">Закрыть</button>
+            </div>
         </div>
 
         <div id="profileModal" class="modal">
@@ -1382,6 +1605,7 @@
                 </div>
                 <button class="modal-button" onclick="openHistory()">История ставок</button>
                 <button class="modal-button" onclick="openDepositModal()">Пополнить баланс</button>
+                <button class="modal-button" onclick="performLogout()">Выйти</button>
                 <button class="modal-close" onclick="closeProfile()">Закрыть</button>
             </div>
         </div>
@@ -1435,7 +1659,7 @@
                     <div class="support-chat" id="supportChat"></div>
                     <div class="chat-input-container">
                         <textarea class="chat-input" id="chatInput" placeholder="Введите ваше сообщение" rows="2"></textarea>
-                        <button class="chat-send-btn" id="chatSendBtn">Отправить</button>
+                        <button class="chat-send-btn" onclick="sendSupportMessage()">Отправить</button>
                     </div>
                 </div>
                 <button class="modal-close" onclick="closeSupportModal()">Закрыть</button>
@@ -1445,28 +1669,57 @@
         <div id="global-notification"></div>
     </div>
 
-    <script src="coupon-manager.js"></script>
-    <script src="deposit.js"></script>
-    <script src="support.js"></script>
     <script>
+        // Глобальные переменные
+        const TelegramWebApp = window.Telegram?.WebApp;
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let balance = parseFloat(localStorage.getItem('balance')) || 0;
+        let couponItems = JSON.parse(localStorage.getItem('couponItems')) || [];
+        let betHistory = JSON.parse(localStorage.getItem('betHistory')) || [];
+        let supportMessages = JSON.parse(localStorage.getItem('supportMessages')) || [];
+
+        // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', () => {
-            const betCoupon = document.querySelector('.bet-coupon');
-            const clearCouponBtn = document.querySelector('.clear-coupon');
-            const userName = document.getElementById('userName');
-            const connectTgBtn = document.getElementById('connectTgBtn');
-            const notificationCount = document.querySelector('.notification-count');
-            const notificationsBtn = document.querySelector('.notifications-btn');
+            console.log('DOM fully loaded');
+            initApp();
+            
+            // Автоматически показываем купон при загрузке, если в нем есть ставки
+            if (couponItems.length > 0) {
+                document.getElementById('betCoupon').classList.add('visible');
+            }
+        });
 
-            const userNameText = 'Гость';
-            userName.textContent = userNameText;
-            document.getElementById('profileName').textContent = userNameText;
-            connectTgBtn.style.display = 'inline-block';
+        function initApp() {
+            // Инициализация Telegram Web App
+            if (TelegramWebApp) {
+                console.log('Telegram Web App initialized');
+                TelegramWebApp.ready();
+                TelegramWebApp.expand();
+                
+                // Автоматическая авторизация если в Telegram
+                if (TelegramWebApp.initDataUnsafe?.user) {
+                    const tgUser = TelegramWebApp.initDataUnsafe.user;
+                    autoLoginWithTelegram(tgUser);
+                }
+                
+                document.body.style.background = TelegramWebApp.themeParams.bg_color || 'linear-gradient(135deg, #0c0c0c, #1a1a1a)';
+                document.getElementById('notInTelegram').style.display = 'none';
+                document.getElementById('connectTgBtn').style.display = 'none';
+            } else {
+                console.warn('Not running in Telegram Web App');
+                document.getElementById('notInTelegram').style.display = 'flex';
+                document.getElementById('connectTgBtn').style.display = 'inline-block';
+            }
 
+            // Обновление интерфейса в зависимости от статуса авторизации
+            updateAuthUI();
+
+            // Обработка кликов по карточкам матчей
             document.querySelectorAll('.match-card').forEach(card => {
                 card.addEventListener('click', (e) => {
-                    if (e.target.closest('.odds-item')) {
-                        return;
-                    }
+                    if (e.target.closest('.odds-item')) return;
+                    console.log('Match card clicked:', card.dataset.matchId);
                     const matchId = card.getAttribute('data-match-id');
                     const matchTime = card.querySelector('.match-time').textContent;
                     const league = card.querySelector('.match-league').textContent;
@@ -1483,30 +1736,44 @@
                 });
             });
 
+            // Обработка кликов по коэффициентам - ИЗМЕНЕНО: купон открывается всегда
             document.querySelectorAll('.odds-item').forEach(item => {
-                item.addEventListener('click', function(e) {
+                item.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const event = this.getAttribute('data-event');
-                    const bet = this.getAttribute('data-bet');
-                    const odds = this.getAttribute('data-odds');
-                    const matchId = this.getAttribute('data-match-id');
+                    console.log('Odds item clicked:', item.dataset.event, item.dataset.bet);
+                    
+                    // Показываем купон даже если не авторизован
+                    const event = item.dataset.event;
+                    const bet = item.dataset.bet;
+                    const odds = parseFloat(item.dataset.odds);
+                    const matchId = parseInt(item.dataset.matchId);
                     const added = addToCoupon(event, bet, odds, matchId);
+                    
                     if (added) {
-                        this.classList.add('selected');
-                        betCoupon.classList.add('visible');
+                        item.classList.add('selected');
+                        document.getElementById('betCoupon').classList.add('visible');
                         showNotification(`Добавлено в купон: ${event} - ${bet} (${odds})`);
+                        
+                        // Если не авторизован, предлагаем войти
+                        if (!isLoggedIn) {
+                            showNotification('Войдите, чтобы сделать ставку');
+                            showModal('login');
+                        }
                     } else {
                         removeFromCouponByEvent(event, bet, matchId);
-                        this.classList.remove('selected');
+                        item.classList.remove('selected');
                         if (!isCouponNotEmpty()) {
-                            betCoupon.classList.remove('visible');
+                            document.getElementById('betCoupon').classList.remove('visible');
                         }
                     }
+                    updateCoupon();
                 });
             });
 
+            // Обработка переключения вкладок купона
             document.querySelectorAll('.coupon-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
+                    console.log('Coupon tab switched:', tab.dataset.tab);
                     document.querySelectorAll('.coupon-tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
                     const tabId = tab.getAttribute('data-tab');
@@ -1520,45 +1787,408 @@
                 });
             });
 
-            clearCouponBtn.addEventListener('click', () => {
-                clearCoupon();
-                betCoupon.classList.remove('visible');
-                document.querySelectorAll('.odds-item').forEach(item => {
-                    item.classList.remove('selected');
-                });
+            // Обработка ввода суммы ставки
+            document.getElementById('stakeInput').addEventListener('input', () => {
+                console.log('Stake input changed:', document.getElementById('stakeInput').value);
+                updateCoupon();
             });
 
-            notificationsBtn.addEventListener('click', () => {
+            // Обработка уведомлений
+            document.querySelector('.notifications-btn').addEventListener('click', () => {
+                console.log('Notifications button clicked');
                 showNotification('Уведомления пока не реализованы');
-                notificationCount.textContent = '0';
+                document.querySelector('.notification-count').textContent = '0';
             });
 
-            function removeFromCouponByEvent(eventName, betType, matchId) {
-                const index = couponItems.findIndex(item => 
-                    item.event === eventName && item.bet === betType && item.matchId === matchId
-                );
-                if (index !== -1) {
-                    removeFromCoupon(index);
-                }
-            }
+            // Обработка переключения дат
+            document.querySelectorAll('.date-arrow').forEach(arrow => {
+                arrow.addEventListener('click', () => {
+                    const currentTitle = document.querySelector('.date-title').textContent;
+                    console.log('Date navigation clicked:', currentTitle);
+                    showNotification(`Переключение даты: ${currentTitle}`);
+                });
+            });
 
-            function isCouponNotEmpty() {
-                return couponItems.length > 0;
-            }
+            // Инициализация купона
+            initCoupon();
+            updateBalance();
+            updateBetHistory();
+            highlightSelectedOdds();
 
-            function highlightSelectedOdds() {
-                document.querySelectorAll('.odds-item').forEach(item => {
-                    const event = item.getAttribute('data-event');
-                    const bet = item.getAttribute('data-bet');
-                    const matchId = item.getAttribute('data-match-id');
-                    if (isInCoupon(event, bet, matchId)) {
-                        item.classList.add('selected');
-                        betCoupon.classList.add('visible');
-                    }
+            // Обработка смены темы Telegram
+            if (TelegramWebApp) {
+                TelegramWebApp.onEvent('themeChanged', () => {
+                    console.log('Telegram theme changed');
+                    document.body.style.background = TelegramWebApp.themeParams.bg_color || 'linear-gradient(135deg, #0c0c0c, #1a1a1a)';
                 });
             }
+        }
 
-            function showNotification(message) {
+        // Функция автоматического входа через Telegram
+        function autoLoginWithTelegram(tgUser) {
+            const userId = tgUser.id.toString();
+            let user = JSON.parse(localStorage.getItem('user_' + userId));
+            
+            if (!user) {
+                // Создаем нового пользователя
+                user = {
+                    id: userId,
+                    username: tgUser.username || tgUser.first_name,
+                    first_name: tgUser.first_name,
+                    last_name: tgUser.last_name || '',
+                    balance: 1000, // Начальный баланс
+                    registrationDate: new Date().toISOString(),
+                    isTelegram: true
+                };
+                localStorage.setItem('user_' + userId, JSON.stringify(user));
+                showNotification('Добро пожаловать! Вам начислен стартовый бонус 1000$');
+            }
+            
+            isLoggedIn = true;
+            currentUser = user;
+            balance = user.balance;
+            
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            localStorage.setItem('balance', balance.toString());
+            
+            updateAuthUI();
+            updateBalance();
+        }
+
+        // Функция подключения Telegram
+        function connectTelegram() {
+    if (TelegramWebApp) {
+        // Если в Telegram Web App, имитируем пользователя
+        const testUser = {
+            id: Math.random().toString(36).substr(2, 9),
+            username: 'TestUser',
+            first_name: 'Test',
+            last_name: 'User',
+            language_code: 'ru',
+            is_premium: false
+        };
+        autoLoginWithTelegram(testUser);
+    } else {
+        // Имитируем вход для тестирования
+        const testUser = {
+            id: 'test_user_123',
+            username: 'TestUser',
+            first_name: 'Test',
+            last_name: 'User', 
+            balance: 1000,
+            registrationDate: new Date().toISOString()
+        };
+        
+        isLoggedIn = true;
+        currentUser = testUser;
+        balance = 1000;
+        
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        localStorage.setItem('balance', balance.toString());
+        
+        updateAuthUI();
+        updateBalance();
+        showNotification('Тестовый вход выполнен! Баланс: 1000$');
+        
+        hideModal('login');
+        hideModal('register');
+    }
+}
+
+        // Функции авторизации
+        function updateAuthUI() {
+            const userInfoSection = document.getElementById('userInfoSection');
+            const authButtonsSection = document.getElementById('authButtonsSection');
+            const userName = document.getElementById('userName');
+            const profileName = document.getElementById('profileName');
+
+            if (isLoggedIn && currentUser) {
+                userInfoSection.style.display = 'flex';
+                authButtonsSection.style.display = 'none';
+                userName.textContent = currentUser.username;
+                profileName.textContent = currentUser.username;
+            } else {
+                userInfoSection.style.display = 'none';
+                authButtonsSection.style.display = 'flex';
+                userName.textContent = 'Гость';
+                profileName.textContent = 'Гость';
+            }
+        }
+
+        function performLogout() {
+            isLoggedIn = false;
+            currentUser = null;
+            
+            localStorage.setItem('isLoggedIn', 'false');
+            localStorage.removeItem('currentUser');
+            
+            updateAuthUI();
+            showNotification('Вы вышли из системы');
+        }
+
+        // Функция размещения ставки - ИЗМЕНЕНО: проверка авторизации
+        function placeBet() {
+            console.log('Placing bet');
+            
+            if (!isLoggedIn) {
+                showModal('login');
+                showNotification('Войдите, чтобы сделать ставку');
+                return;
+            }
+
+            const stake = parseFloat(document.getElementById('stakeInput').value) || 0;
+            if (stake <= 0 || stake > balance) {
+                showNotification('Недостаточно средств или неверная сумма');
+                return;
+            }
+            if (couponItems.length === 0) {
+                showNotification('Добавьте события в купон');
+                return;
+            }
+
+            const totalOdds = couponItems.reduce((acc, item) => acc * item.odds, 1).toFixed(2);
+            const potentialWin = (stake * totalOdds).toFixed(2);
+            const bet = {
+                id: Date.now(),
+                date: new Date().toLocaleString('ru-RU'),
+                events: couponItems,
+                stake: stake,
+                totalOdds: totalOdds,
+                potentialWin: potentialWin,
+                status: 'pending'
+            };
+            
+            betHistory.push(bet);
+            localStorage.setItem('betHistory', JSON.stringify(betHistory));
+            balance -= stake;
+            localStorage.setItem('balance', balance);
+            
+            // Обновляем баланс пользователя в хранилище
+            if (currentUser && currentUser.id) {
+                currentUser.balance = balance;
+                localStorage.setItem('user_' + currentUser.id, JSON.stringify(currentUser));
+            }
+            
+            updateBalance();
+
+            if (TelegramWebApp) {
+                TelegramWebApp.sendData(JSON.stringify({ type: 'place_bet', bet }));
+            }
+
+            clearCoupon();
+            document.getElementById('betCoupon').classList.remove('visible');
+            showNotification('Ставка успешно размещена!');
+            updateBetHistory();
+            updateCouponHistory();
+        }
+
+        // Функции модальных окон
+        function showModal(modalType) {
+            document.getElementById(modalType + 'Modal').classList.add('show');
+        }
+
+        function hideModal(modalType) {
+            document.getElementById(modalType + 'Modal').classList.remove('show');
+        }
+
+        // Логика купона
+        function initCoupon() {
+            console.log('Initializing coupon');
+            if (couponItems.length > 0) {
+                document.getElementById('betCoupon').classList.add('visible');
+            }
+            updateCoupon();
+            updateCouponHistory();
+        }
+
+        function addToCoupon(event, bet, odds, matchId) {
+            console.log('Adding to coupon:', { event, bet, odds, matchId });
+            const exists = couponItems.find(item => item.event === event && item.bet === bet && item.matchId === matchId);
+            if (!exists) {
+                couponItems.push({ event, bet, odds, matchId });
+                localStorage.setItem('couponItems', JSON.stringify(couponItems));
+                return true;
+            }
+            return false;
+        }
+
+        function removeFromCoupon(index) {
+            console.log('Removing from coupon at index:', index);
+            couponItems.splice(index, 1);
+            localStorage.setItem('couponItems', JSON.stringify(couponItems));
+            updateCoupon();
+        }
+
+        function removeFromCouponByEvent(event, bet, matchId) {
+            console.log('Removing from coupon by event:', event, bet, matchId);
+            const index = couponItems.findIndex(item => item.event === event && item.bet === bet && item.matchId === matchId);
+            if (index !== -1) {
+                removeFromCoupon(index);
+            }
+        }
+
+        function isCouponNotEmpty() {
+            return couponItems.length > 0;
+        }
+
+        function clearCoupon() {
+            console.log('Clearing coupon');
+            couponItems = [];
+            localStorage.setItem('couponItems', JSON.stringify(couponItems));
+            document.querySelectorAll('.odds-item').forEach(item => item.classList.remove('selected'));
+            updateCoupon();
+        }
+
+        function updateCoupon() {
+            console.log('Updating coupon');
+            const couponItemsDiv = document.getElementById('couponItems');
+            const totalOddsDiv = document.getElementById('totalOdds');
+            const potentialWinDiv = document.getElementById('potentialWin');
+            const stakeInput = document.getElementById('stakeInput');
+            const placeBetBtn = document.getElementById('placeBetBtn');
+
+            if (couponItems.length === 0) {
+                couponItemsDiv.innerHTML = '<div class="coupon-empty">Выберите события для ставки</div>';
+                totalOddsDiv.textContent = '1.00';
+                potentialWinDiv.textContent = '0.00';
+                placeBetBtn.disabled = true;
+                if (TelegramWebApp) {
+                    TelegramWebApp.MainButton.hide();
+                }
+                return;
+            }
+
+            couponItemsDiv.innerHTML = '';
+            couponItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'coupon-item';
+                div.innerHTML = `
+                    <div class="coupon-event">${item.event}</div>
+                    <div class="coupon-bet">${item.bet}</div>
+                    <div class="coupon-odds">
+                        <div class="odds-number">${item.odds.toFixed(2)}</div>
+                        <div class="remove-bet" onclick="removeFromCoupon(${index})">×</div>
+                    </div>
+                `;
+                couponItemsDiv.appendChild(div);
+            });
+
+            const totalOdds = couponItems.reduce((acc, item) => acc * item.odds, 1).toFixed(2);
+            totalOddsDiv.textContent = totalOdds;
+            const stake = parseFloat(stakeInput.value) || 0;
+            const potentialWin = (stake * totalOdds).toFixed(2);
+            potentialWinDiv.textContent = potentialWin;
+
+            // Кнопка ставки активна только для авторизованных пользователей
+            placeBetBtn.disabled = !isLoggedIn || stake <= 0 || stake > balance || couponItems.length === 0;
+            
+            if (TelegramWebApp && couponItems.length > 0 && stake > 0 && stake <= balance && isLoggedIn) {
+                TelegramWebApp.MainButton.setParams({
+                    text: 'СДЕЛАТЬ СТАВКУ',
+                    color: '#ff3333',
+                    text_color: '#fff'
+                });
+                TelegramWebApp.MainButton.show();
+                TelegramWebApp.MainButton.onClick(placeBet);
+            } else if (TelegramWebApp) {
+                TelegramWebApp.MainButton.hide();
+            }
+        }
+
+        function updateCouponHistory() {
+            console.log('Updating coupon history');
+            const couponHistoryDiv = document.getElementById('couponHistory');
+            if (betHistory.length === 0) {
+                couponHistoryDiv.innerHTML = '<div class="coupon-empty">Нет ставок</div>';
+                return;
+            }
+            couponHistoryDiv.innerHTML = '';
+            betHistory.slice(-10).reverse().forEach(bet => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.dataset.betId = bet.id;
+                const betType = getBetType(bet.events);
+                div.innerHTML = `
+                    <div class="history-date">${bet.date}</div>
+                    <div class="history-event">${bet.events.map(e => `${e.event} (${e.bet})`).join(', ')}</div>
+                    <div class="history-details">
+                        Тип: ${betType}<br>
+                        Ставка: ${bet.stake.toFixed(2)}$ | Коэф: ${bet.totalOdds} | Выигрыш: ${bet.potentialWin}$<br>
+                        Статус: ${getStatusText(bet.status)}
+                    </div>
+                `;
+                couponHistoryDiv.appendChild(div);
+            });
+        }
+
+        function getBetType(events) {
+            return events.length > 1 ? 'Экспресс' : 'Ординар';
+        }
+
+        function getStatusText(status) {
+            switch (status) {
+                case 'pending': return 'В ожидании';
+                case 'won': return 'Выиграна';
+                case 'lost': return 'Проиграна';
+                default: return 'Неизвестно';
+            }
+        }
+
+        function isInCoupon(event, bet, matchId) {
+            return couponItems.some(item => item.event === event && item.bet === bet && item.matchId === matchId);
+        }
+
+        function highlightSelectedOdds() {
+            console.log('Highlighting selected odds');
+            document.querySelectorAll('.odds-item').forEach(item => {
+                const event = item.dataset.event;
+                const bet = item.dataset.bet;
+                const matchId = parseInt(item.dataset.matchId);
+                if (isInCoupon(event, bet, matchId)) {
+                    item.classList.add('selected');
+                    document.getElementById('betCoupon').classList.add('visible');
+                }
+            });
+        }
+
+        function updateBalance() {
+            console.log('Updating balance:', balance);
+            const balanceDisplay = document.getElementById('balanceDisplay');
+            const profileBalance = document.getElementById('profileBalance');
+            if (balanceDisplay) balanceDisplay.textContent = `${balance.toFixed(2)}$`;
+            if (profileBalance) profileBalance.textContent = `${balance.toFixed(2)}$`;
+        }
+
+        function updateBetHistory() {
+            console.log('Updating bet history');
+            const historyList = document.getElementById('betHistoryList');
+            if (!historyList) return;
+            historyList.innerHTML = betHistory.length === 0 ? '<div class="coupon-empty">Нет ставок</div>' : '';
+            betHistory.slice(-10).reverse().forEach(bet => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.dataset.betId = bet.id;
+                const betType = getBetType(bet.events);
+                div.innerHTML = `
+                    <div class="history-date">${bet.date}</div>
+                    <div class="history-event">${bet.events.map(e => `${e.event} (${e.bet})`).join(', ')}</div>
+                    <div class="history-details">
+                        Тип: ${betType}<br>
+                        Ставка: ${bet.stake.toFixed(2)}$ | Коэф: ${bet.totalOdds} | Выигрыш: ${bet.potentialWin}$<br>
+                        Статус: ${getStatusText(bet.status)}
+                    </div>
+                `;
+                historyList.appendChild(div);
+            });
+        }
+
+        function showNotification(message) {
+            console.log('Showing notification:', message);
+            if (TelegramWebApp) {
+                TelegramWebApp.showAlert(message);
+            } else {
                 let notification = document.getElementById('global-notification');
                 if (!notification) {
                     notification = document.createElement('div');
@@ -1571,37 +2201,120 @@
                     notification.style.opacity = '0';
                 }, 3000);
             }
+        }
 
-            function openProfile() {
-                document.getElementById('profileModal').classList.add('show');
-                updateBetHistory();
+        function openProfile() {
+            if (!isLoggedIn) {
+                showModal('login');
+                return;
             }
+            console.log('Opening profile modal');
+            document.getElementById('profileModal').classList.add('show');
+            updateBetHistory();
+        }
 
-            function closeProfile() {
-                document.getElementById('profileModal').classList.remove('show');
+        function closeProfile() {
+            console.log('Closing profile modal');
+            document.getElementById('profileModal').classList.remove('show');
+        }
+
+        function openHistory() {
+            console.log('Opening history modal');
+            document.getElementById('profileModal').classList.remove('show');
+            document.getElementById('historyModal').classList.add('show');
+            updateBetHistory();
+        }
+
+        function closeHistory() {
+            console.log('Closing history modal');
+            document.getElementById('historyModal').classList.remove('show');
+        }
+
+        function openDepositModal() {
+            if (!isLoggedIn) {
+                showModal('login');
+                return;
             }
+            console.log('Opening deposit modal');
+            document.getElementById('depositModal').classList.add('show');
+        }
 
-            function openHistory() {
-                document.getElementById('profileModal').classList.remove('show');
-                document.getElementById('historyModal').classList.add('show');
-                updateBetHistory();
+        function closeDepositModal() {
+            console.log('Closing deposit modal');
+            document.getElementById('depositModal').classList.remove('show');
+        }
+
+        function processDeposit() {
+            console.log('Processing deposit');
+            const amount = parseFloat(document.getElementById('depositAmount').value) || 0;
+            if (amount <= 0) {
+                showNotification('Введите корректную сумму');
+                return;
             }
-
-            function closeHistory() {
-                document.getElementById('historyModal').classList.remove('show');
+            balance += amount;
+            localStorage.setItem('balance', balance);
+            
+            // Обновляем баланс пользователя в хранилище
+            if (currentUser && currentUser.id) {
+                currentUser.balance = balance;
+                localStorage.setItem('user_' + currentUser.id, JSON.stringify(currentUser));
             }
-
-            highlightSelectedOdds();
+            
             updateBalance();
-            initCoupon();
+            showNotification(`Баланс пополнен на ${amount.toFixed(2)}$`);
+            closeDepositModal();
+        }
 
-            document.querySelectorAll('.date-arrow').forEach(arrow => {
-                arrow.addEventListener('click', function() {
-                    const currentTitle = document.querySelector('.date-title').textContent;
-                    console.log('Переключение даты: ', currentTitle);
-                });
+        function openSupportModal() {
+            console.log('Opening support modal');
+            document.getElementById('supportModal').classList.add('show');
+            renderSupportChat();
+        }
+
+        function closeSupportModal() {
+            console.log('Closing support modal');
+            document.getElementById('supportModal').classList.remove('show');
+        }
+
+        function sendSupportMessage() {
+            console.log('Sending support message');
+            const input = document.getElementById('chatInput');
+            if (!input || !input.value.trim()) {
+                showNotification('Введите сообщение');
+                return;
+            }
+            const message = {
+                id: Date.now(),
+                text: input.value.trim(),
+                time: new Date().toLocaleTimeString('ru-RU'),
+                type: 'user'
+            };
+            supportMessages.push(message);
+            localStorage.setItem('supportMessages', JSON.stringify(supportMessages));
+            renderSupportChat();
+            input.value = '';
+            if (TelegramWebApp) {
+                TelegramWebApp.sendData(JSON.stringify({ type: 'support_message', message: message.text }));
+            }
+            showNotification('Сообщение отправлено');
+        }
+
+        function renderSupportChat() {
+            console.log('Rendering support chat');
+            const chat = document.getElementById('supportChat');
+            if (!chat) return;
+            chat.innerHTML = '';
+            supportMessages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = `chat-message ${msg.type}`;
+                div.innerHTML = `
+                    <div class="message-text">${msg.text}</div>
+                    <div class="message-time">${msg.time}</div>
+                `;
+                chat.appendChild(div);
             });
-        });
+            chat.scrollTop = chat.scrollHeight;
+        }
     </script>
 </body>
 </html>
