@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
@@ -1554,392 +1554,473 @@
     </div>
 
     <script>
-        const TelegramWebApp = window.Telegram?.WebApp;
-        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-        let balance = parseFloat(localStorage.getItem('balance')) || 0;
-        let couponItems = JSON.parse(localStorage.getItem('couponItems')) || [];
-        let betHistory = JSON.parse(localStorage.getItem('betHistory')) || [];
-        let supportMessages = JSON.parse(localStorage.getItem('supportMessages')) || [];
+    const TelegramWebApp = window.Telegram?.WebApp;
+    let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+    let balance = parseFloat(localStorage.getItem('balance')) || 0;
+    let couponItems = JSON.parse(localStorage.getItem('couponItems')) || [];
+    let betHistory = JSON.parse(localStorage.getItem('betHistory')) || [];
+    let supportMessages = JSON.parse(localStorage.getItem('supportMessages')) || [];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM fully loaded');
-            initApp();
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM fully loaded');
+        initApp();
+    });
+
+    function initApp() {
+        console.log('Initializing app');
+        if (TelegramWebApp) {
+            console.log('Telegram Web App detected');
+            TelegramWebApp.ready();
+            TelegramWebApp.expand();
+            document.body.style.background = TelegramWebApp.themeParams.bg_color || 'linear-gradient(135deg, #121212, #1a1a1a)';
+            document.getElementById('notInTelegram').style.display = 'none';
+            document.getElementById('connectTgBtn').style.display = 'inline-block';
+        } else {
+            console.warn('Not running in Telegram Web App');
+            document.getElementById('notInTelegram').style.display = 'flex';
+            document.getElementById('connectTgBtn').style.display = 'inline-block';
+        }
+
+        updateAuthUI();
+        updateBalance();
+        initCoupon();
+        updateCouponHistory();
+        
+        // **ПОЛНАЯ ЗАГРУЗКА ДАННЫХ МАТЧА**
+        const matchData = JSON.parse(localStorage.getItem('selectedMatch'));
+        if (matchData) {
+            console.log('Loading enhanced match data:', matchData.id);
+            
+            // Основная информация
+            document.getElementById('matchTime').textContent = matchData.time || '18:45';
+            document.getElementById('matchLeague').textContent = matchData.league || 'Premier League';
+            document.getElementById('teamHomeName').textContent = matchData.teamHome || 'Команда 1';
+            document.getElementById('teamAwayName').textContent = matchData.teamAway || 'Команда 2';
+            document.getElementById('teamHomeLogo').textContent = matchData.teamHomeLogo || (matchData.teamHome ? matchData.teamHome.charAt(0) : 'T');
+            document.getElementById('teamAwayLogo').textContent = matchData.teamAwayLogo || (matchData.teamAway ? matchData.teamAway.charAt(0) : 'T');
+            
+            // Live статус и счёт
+            if (matchData.status === 'live' && matchData.currentScore) {
+                // Удаляем старый индикатор если есть
+                const oldIndicator = document.getElementById('liveIndicator');
+                if (oldIndicator) oldIndicator.remove();
+                
+                const liveIndicator = document.createElement('div');
+                liveIndicator.id = 'liveIndicator';
+                liveIndicator.style.cssText = `
+                    position: absolute; top: 10px; right: 10px; 
+                    background: #ff4444; color: white; padding: 4px 8px; 
+                    border-radius: 12px; font-size: 0.8rem; 
+                    animation: pulse 2s infinite; z-index: 10;
+                    font-weight: bold;
+                `;
+                liveIndicator.textContent = `LIVE ${matchData.currentMinute || 45}'`;
+                document.querySelector('.match-header').appendChild(liveIndicator);
+                
+                // Показать текущий счёт
+                const oldScore = document.getElementById('liveScore');
+                if (oldScore) oldScore.remove();
+                
+                const scoreDisplay = document.createElement('div');
+                scoreDisplay.id = 'liveScore';
+                scoreDisplay.style.cssText = 'text-align: center; margin: 10px 0; font-size: 1.8rem; color: #ff4444; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);';
+                scoreDisplay.textContent = matchData.currentScore;
+                const teamsContainer = document.querySelector('.match-teams');
+                teamsContainer.parentNode.insertBefore(scoreDisplay, teamsContainer);
+            } else if (matchData.status === 'finished' && matchData.finalScore) {
+                // Удаляем live индикатор
+                const oldIndicator = document.getElementById('liveIndicator');
+                if (oldIndicator) oldIndicator.remove();
+                
+                // Показать финальный счёт
+                const oldScore = document.getElementById('finalScore');
+                if (oldScore) oldScore.remove();
+                
+                const finalScore = document.createElement('div');
+                finalScore.id = 'finalScore';
+                finalScore.style.cssText = 'text-align: center; margin: 10px 0; font-size: 1.8rem; color: var(--success-color); font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);';
+                finalScore.textContent = matchData.finalScore;
+                const teamsContainer = document.querySelector('.match-teams');
+                teamsContainer.parentNode.insertBefore(finalScore, teamsContainer);
+            } else {
+                // Удаляем все индикаторы если upcoming
+                const oldIndicator = document.getElementById('liveIndicator');
+                const oldScore = document.getElementById('liveScore');
+                const oldFinalScore = document.getElementById('finalScore');
+                if (oldIndicator) oldIndicator.remove();
+                if (oldScore) oldScore.remove();
+                if (oldFinalScore) oldFinalScore.remove();
+            }
+            
+            // **ГЕНЕРАЦИЯ СОБЫТИЙ С ПОЛНЫМИ КОТИРОВКАМИ**
+            generateEnhancedEvents(matchData);
+        } else {
+            console.warn('No match data found, redirecting to sport.html');
+            showNotification('Данные о матче не найдены');
+            setTimeout(() => {
+                window.location.href = 'sport.html';
+            }, 2000);
+        }
+
+        document.querySelectorAll('.coupon-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                console.log('Coupon tab switched:', tab.dataset.tab);
+                document.querySelectorAll('.coupon-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById('couponItems').style.display = tabId === 'bets' ? 'block' : 'none';
+                document.getElementById('couponHistory').style.display = tabId === 'history' ? 'block' : 'none';
+                document.querySelector('.coupon-total').style.display = tabId === 'bets' ? 'block' : 'none';
+                document.querySelector('.coupon-header').style.display = tabId === 'bets' ? 'flex' : 'none';
+                if (tabId === 'history') {
+                    updateCouponHistory();
+                }
+            });
         });
 
-        function initApp() {
-            console.log('Initializing app');
-            if (TelegramWebApp) {
-                console.log('Telegram Web App detected');
-                TelegramWebApp.ready();
-                TelegramWebApp.expand();
-                document.body.style.background = TelegramWebApp.themeParams.bg_color || 'linear-gradient(135deg, #121212, #1a1a1a)';
-                document.getElementById('notInTelegram').style.display = 'none';
-                document.getElementById('connectTgBtn').style.display = 'inline-block';
+        document.querySelector('.notifications-btn').addEventListener('click', () => {
+            console.log('Notifications button clicked');
+            showNotification('Уведомления пока недоступны');
+        });
+
+        initSupportChat();
+    }
+
+    // **ДОПОЛНИТЕЛЬНАЯ CSS АНИМАЦИЯ - добавляем в head**
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    function connectTelegram() {
+        console.log('Connecting to Telegram');
+        if (TelegramWebApp) {
+            TelegramWebApp.ready();
+            if (TelegramWebApp.initDataUnsafe?.user) {
+                const user = TelegramWebApp.initDataUnsafe.user;
+                isLoggedIn = true;
+                currentUser = {
+                    id: user.id,
+                    username: user.username || user.first_name || 'User_' + user.id,
+                    firstName: user.first_name || '',
+                    lastName: user.last_name || ''
+                };
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateAuthUI();
+                updateBalance();
+                showNotification(`Добро пожаловать, ${currentUser.username}!`);
+                hideModal('login');
+                hideModal('register');
             } else {
-                console.warn('Not running in Telegram Web App');
-                document.getElementById('notInTelegram').style.display = 'flex';
-                document.getElementById('connectTgBtn').style.display = 'inline-block';
+                showNotification('Не удалось получить данные Telegram. Попробуйте снова.');
             }
-
-            updateAuthUI();
-            updateBalance();
-            initCoupon();
-            updateCouponHistory();
-            const matchData = JSON.parse(localStorage.getItem('selectedMatch'));
-            if (matchData) {
-                document.getElementById('matchTime').textContent = matchData.time;
-                document.getElementById('matchLeague').textContent = matchData.league;
-                document.getElementById('teamHomeName').textContent = matchData.teamHome;
-                document.getElementById('teamAwayName').textContent = matchData.teamAway;
-                document.getElementById('teamHomeLogo').textContent = matchData.teamHome.charAt(0);
-                document.getElementById('teamAwayLogo').textContent = matchData.teamAway.charAt(0);
-                generateEvents(matchData);
-            } else {
-                showNotification('Данные о матче не найдены');
-                setTimeout(() => {
-                    window.location.href = 'sport.html';
-                }, 2000);
-            }
-
-            document.querySelectorAll('.coupon-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    console.log('Coupon tab switched:', tab.dataset.tab);
-                    document.querySelectorAll('.coupon-tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    const tabId = tab.getAttribute('data-tab');
-                    document.getElementById('couponItems').style.display = tabId === 'bets' ? 'block' : 'none';
-                    document.getElementById('couponHistory').style.display = tabId === 'history' ? 'block' : 'none';
-                    document.querySelector('.coupon-total').style.display = tabId === 'bets' ? 'block' : 'none';
-                    document.querySelector('.coupon-header').style.display = tabId === 'bets' ? 'flex' : 'none';
-                    if (tabId === 'history') {
-                        updateCouponHistory();
-                    }
-                });
-            });
-
-            document.querySelector('.notifications-btn').addEventListener('click', () => {
-                console.log('Notifications button clicked');
-                showNotification('Уведомления пока недоступны');
-            });
-
-            initSupportChat();
+        } else {
+            document.getElementById('notInTelegram').style.display = 'flex';
         }
+    }
 
-        function connectTelegram() {
-            console.log('Connecting to Telegram');
-            if (TelegramWebApp) {
-                TelegramWebApp.ready();
-                if (TelegramWebApp.initDataUnsafe?.user) {
-                    const user = TelegramWebApp.initDataUnsafe.user;
-                    isLoggedIn = true;
-                    currentUser = {
-                        id: user.id,
-                        username: user.username || user.first_name || 'User_' + user.id,
-                        firstName: user.first_name || '',
-                        lastName: user.last_name || ''
-                    };
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    updateAuthUI();
-                    updateBalance();
-                    showNotification(`Добро пожаловать, ${currentUser.username}!`);
-                    hideModal('login');
-                    hideModal('register');
-                } else {
-                    showNotification('Не удалось получить данные Telegram. Попробуйте снова.');
-                }
-            } else {
-                document.getElementById('notInTelegram').style.display = 'flex';
-            }
+    function updateAuthUI() {
+        console.log('Updating auth UI, isLoggedIn:', isLoggedIn);
+        const userInfoSection = document.getElementById('userInfoSection');
+        const authButtonsSection = document.getElementById('authButtonsSection');
+        const userNameElement = document.getElementById('userName');
+
+        if (isLoggedIn && currentUser) {
+            userInfoSection.style.display = 'flex';
+            authButtonsSection.style.display = 'none';
+            userNameElement.textContent = currentUser.username;
+            document.getElementById('connectTgBtn').style.display = 'none';
+        } else {
+            userInfoSection.style.display = 'none';
+            authButtonsSection.style.display = 'flex';
+            document.getElementById('connectTgBtn').style.display = 'inline-block';
         }
+    }
 
-        function updateAuthUI() {
-            console.log('Updating auth UI, isLoggedIn:', isLoggedIn);
-            const userInfoSection = document.getElementById('userInfoSection');
-            const authButtonsSection = document.getElementById('authButtonsSection');
-            const userNameElement = document.getElementById('userName');
+    function performLogout() {
+        console.log('Performing logout');
+        isLoggedIn = false;
+        currentUser = null;
+        balance = 0;
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('balance');
+        updateAuthUI();
+        updateBalance();
+        showNotification('Вы вышли из аккаунта');
+        closeProfile();
+    }
 
-            if (isLoggedIn && currentUser) {
-                userInfoSection.style.display = 'flex';
-                authButtonsSection.style.display = 'none';
-                userNameElement.textContent = currentUser.username;
-                document.getElementById('connectTgBtn').style.display = 'none';
-            } else {
-                userInfoSection.style.display = 'none';
-                authButtonsSection.style.display = 'flex';
-                document.getElementById('connectTgBtn').style.display = 'inline-block';
-            }
+    function openProfile() {
+        if (!isLoggedIn) {
+            showModal('login');
+            showNotification('Войдите, чтобы открыть профиль');
+            return;
         }
+        console.log('Opening profile for user:', currentUser);
+        document.getElementById('profileName').textContent = currentUser?.username || 'Гость';
+        document.getElementById('profileBalance').textContent = `${balance.toFixed(2)}$`;
+        showModal('profile');
+    }
 
-        function performLogout() {
-            console.log('Performing logout');
-            isLoggedIn = false;
-            currentUser = null;
-            balance = 0;
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('balance');
-            updateAuthUI();
-            updateBalance();
-            showNotification('Вы вышли из аккаунта');
-            closeProfile();
-        }
+    function closeProfile() {
+        hideModal('profile');
+    }
 
-        function openProfile() {
-            if (!isLoggedIn) {
-                showModal('login');
-                showNotification('Войдите, чтобы открыть профиль');
-                return;
-            }
-            console.log('Opening profile for user:', currentUser);
-            document.getElementById('profileName').textContent = currentUser?.username || 'Гость';
-            document.getElementById('profileBalance').textContent = `${balance.toFixed(2)}$`;
-            showModal('profile');
-        }
+    function openHistory() {
+        console.log('Opening bet history');
+        updateHistoryUI();
+        showModal('history');
+    }
 
-        function closeProfile() {
-            hideModal('profile');
-        }
+    function closeHistory() {
+        hideModal('history');
+    }
 
-        function openHistory() {
-            console.log('Opening bet history');
-            updateHistoryUI();
-            showModal('history');
-        }
-
-        function closeHistory() {
-            hideModal('history');
-        }
-
-        function updateHistoryUI() {
-            console.log('Updating history UI, betHistory:', betHistory);
-            const historyList = document.getElementById('betHistoryList');
-            historyList.innerHTML = '';
-            if (betHistory.length === 0) {
-                historyList.innerHTML = '<div class="coupon-empty">История ставок пуста</div>';
-            } else {
-                betHistory.forEach(bet => {
-                    const item = document.createElement('div');
-                    item.className = 'history-item';
-                    item.innerHTML = `
-                        <div class="history-date">${new Date(bet.date).toLocaleString('ru-RU')}</div>
-                        <div class="history-event">${bet.event}</div>
-                        <div class="history-details">Ставка: ${bet.bet} | Коэффициент: ${bet.odds} | Сумма: ${bet.stake}$ | Выигрыш: ${bet.potentialWin}$</div>
-                    `;
-                    historyList.appendChild(item);
-                });
-            }
-        }
-
-        function initCoupon() {
-            console.log('Initializing coupon, couponItems:', couponItems);
-            updateCoupon();
-            if (couponItems.length > 0) {
-                document.getElementById('betCoupon').classList.add('visible');
-            }
-        }
-
-        function closeCoupon() {
-            console.log('Closing coupon');
-            document.getElementById('betCoupon').classList.remove('visible');
-        }
-
-        function addToCoupon(event, bet, odds, matchId) {
-            console.log('Adding to coupon:', { event, bet, odds, matchId });
-            const existingIndex = couponItems.findIndex(item => item.event === event && item.bet === bet && item.matchId === matchId);
-            if (existingIndex !== -1) {
-                console.log('Bet already in coupon, removing:', { event, bet, matchId });
-                return false;
-            }
-            couponItems.push({ event, bet, odds: parseFloat(odds), matchId });
-            localStorage.setItem('couponItems', JSON.stringify(couponItems));
-            return true;
-        }
-
-        function removeFromCouponByEvent(eventName, betType, matchId) {
-            console.log('Removing from coupon:', { eventName, betType, matchId });
-            couponItems = couponItems.filter(item => !(item.event === eventName && item.bet === betType && item.matchId === matchId));
-            localStorage.setItem('couponItems', JSON.stringify(couponItems));
-            generateEvents(JSON.parse(localStorage.getItem('selectedMatch')));
-            updateCoupon();
-        }
-
-        function removeFromCoupon(index) {
-            console.log('Removing coupon item at index:', index);
-            const removedItem = couponItems[index];
-            couponItems.splice(index, 1);
-            localStorage.setItem('couponItems', JSON.stringify(couponItems));
-            generateEvents(JSON.parse(localStorage.getItem('selectedMatch')));
-            updateCoupon();
-            if (couponItems.length === 0) {
-                document.getElementById('betCoupon').classList.remove('visible');
-            }
-        }
-
-        function clearCoupon() {
-            console.log('Clearing coupon');
-            couponItems = [];
-            localStorage.setItem('couponItems', JSON.stringify(couponItems));
-            document.getElementById('betCoupon').classList.remove('visible');
-            generateEvents(JSON.parse(localStorage.getItem('selectedMatch')));
-            updateCoupon();
-        }
-
-        function updateCoupon() {
-            console.log('Updating coupon, couponItems:', couponItems);
-            const couponItemsElement = document.getElementById('couponItems');
-            const stakeInput = document.getElementById('stakeInput');
-            const totalOddsElement = document.getElementById('totalOdds');
-            const potentialWinElement = document.getElementById('potentialWin');
-            const placeBetBtn = document.getElementById('placeBetBtn');
-
-            couponItemsElement.innerHTML = '';
-            if (couponItems.length === 0) {
-                couponItemsElement.innerHTML = '<div class="coupon-empty">Выберите события для ставки</div>';
-                stakeInput.value = '';
-                totalOddsElement.textContent = '1.00';
-                potentialWinElement.textContent = '0.00';
-                placeBetBtn.disabled = true;
-                return;
-            }
-
-            couponItems.forEach((item, index) => {
-                const couponItem = document.createElement('div');
-                couponItem.className = 'coupon-item';
-                couponItem.innerHTML = `
-                    <div class="coupon-event">${item.event}</div>
-                    <div class="coupon-bet">${item.bet}</div>
-                    <div class="coupon-odds">
-                        <div class="odds-number">${item.odds.toFixed(2)}</div>
-                        <div class="remove-bet" onclick="removeFromCoupon(${index})"><i class="fas fa-trash"></i></div>
-                    </div>
+    function updateHistoryUI() {
+        console.log('Updating history UI, betHistory:', betHistory);
+        const historyList = document.getElementById('betHistoryList');
+        historyList.innerHTML = '';
+        if (betHistory.length === 0) {
+            historyList.innerHTML = '<div class="coupon-empty">История ставок пуста</div>';
+        } else {
+            betHistory.forEach(bet => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div class="history-date">${new Date(bet.date).toLocaleString('ru-RU')}</div>
+                    <div class="history-event">${bet.event}</div>
+                    <div class="history-details">Ставка: ${bet.bet} | Коэффициент: ${bet.odds} | Сумма: ${bet.stake}$ | Выигрыш: ${bet.potentialWin}$</div>
                 `;
-                couponItemsElement.appendChild(couponItem);
-            });
-
-            const totalOdds = couponItems.reduce((acc, item) => acc * item.odds, 1).toFixed(2);
-            totalOddsElement.textContent = totalOdds;
-            const stake = parseFloat(stakeInput.value) || 0;
-            const potentialWin = (stake * totalOdds).toFixed(2);
-            potentialWinElement.textContent = potentialWin;
-
-            placeBetBtn.disabled = !isLoggedIn || stake <= 0 || couponItems.length === 0;
-            if (couponItems.length > 0) {
-                document.getElementById('betCoupon').classList.add('visible');
-            }
-        }
-
-        function placeBet() {
-            console.log('Placing bet, couponItems:', couponItems);
-            if (!isLoggedIn) {
-                showModal('login');
-                showNotification('Войдите, чтобы сделать ставку');
-                return;
-            }
-
-            const stake = parseFloat(document.getElementById('stakeInput').value);
-            if (stake <= 0 || isNaN(stake)) {
-                showNotification('Введите корректную сумму ставки');
-                return;
-            }
-
-            if (stake > balance) {
-                showNotification('Недостаточно средств на балансе');
-                return;
-            }
-
-            const totalOdds = couponItems.reduce((acc, item) => acc * item.odds, 1).toFixed(2);
-            const potentialWin = (stake * totalOdds).toFixed(2);
-
-            const bet = {
-                date: new Date().toISOString(),
-                event: couponItems.map(item => item.event).join(', '),
-                bet: couponItems.map(item => item.bet).join(', '),
-                odds: totalOdds,
-                stake: stake,
-                potentialWin: potentialWin
-            };
-
-            betHistory.push(bet);
-            localStorage.setItem('betHistory', JSON.stringify(betHistory));
-            balance -= stake;
-            localStorage.setItem('balance', balance);
-            updateBalance();
-            showNotification('Ставка успешно размещена!');
-            clearCoupon();
-            updateCouponHistory();
-        }
-
-        function updateCouponHistory() {
-            console.log('Updating coupon history');
-            const couponHistoryElement = document.getElementById('couponHistory');
-            couponHistoryElement.innerHTML = '';
-            if (betHistory.length === 0) {
-                couponHistoryElement.innerHTML = '<div class="coupon-empty">Нет ставок</div>';
-            } else {
-                betHistory.forEach(bet => {
-                    const item = document.createElement('div');
-                    item.className = 'history-item';
-                    item.innerHTML = `
-                        <div class="history-date">${new Date(bet.date).toLocaleString('ru-RU')}</div>
-                        <div class="history-event">${bet.event}</div>
-                        <div class="history-details">Ставка: ${bet.bet} | Коэффициент: ${bet.odds} | Сумма: ${bet.stake}$ | Выигрыш: ${bet.potentialWin}$</div>
-                    `;
-                    couponHistoryElement.appendChild(item);
-                });
-            }
-        }
-
-        function openDepositModal() {
-            console.log('Opening deposit modal');
-            if (!isLoggedIn) {
-                showModal('login');
-                showNotification('Войдите, чтобы пополнить баланс');
-                return;
-            }
-            showModal('deposit');
-            document.querySelectorAll('.deposit-method').forEach(method => {
-                method.addEventListener('click', () => {
-                    document.querySelectorAll('.deposit-method').forEach(m => m.classList.remove('active'));
-                    method.classList.add('active');
-                });
+                historyList.appendChild(item);
             });
         }
+    }
 
-        function closeDepositModal() {
-            hideModal('deposit');
+    function initCoupon() {
+        console.log('Initializing coupon, couponItems:', couponItems);
+        updateCoupon();
+        if (couponItems.length > 0) {
+            document.getElementById('betCoupon').classList.add('visible');
+        }
+    }
+
+    function closeCoupon() {
+        console.log('Closing coupon');
+        document.getElementById('betCoupon').classList.remove('visible');
+    }
+
+    function addToCoupon(event, bet, odds, matchId) {
+        console.log('Adding to coupon:', { event, bet, odds, matchId });
+        const existingIndex = couponItems.findIndex(item => item.event === event && item.bet === bet && item.matchId === matchId);
+        if (existingIndex !== -1) {
+            console.log('Bet already in coupon, removing:', { event, bet, matchId });
+            return false;
+        }
+        couponItems.push({ event, bet, odds: parseFloat(odds), matchId });
+        localStorage.setItem('couponItems', JSON.stringify(couponItems));
+        return true;
+    }
+
+    function removeFromCouponByEvent(eventName, betType, matchId) {
+        console.log('Removing from coupon:', { eventName, betType, matchId });
+        couponItems = couponItems.filter(item => !(item.event === eventName && item.bet === betType && item.matchId === matchId));
+        localStorage.setItem('couponItems', JSON.stringify(couponItems));
+        const matchData = JSON.parse(localStorage.getItem('selectedMatch'));
+        if (matchData) {
+            generateEnhancedEvents(matchData);
+        }
+        updateCoupon();
+    }
+
+    function removeFromCoupon(index) {
+        console.log('Removing coupon item at index:', index);
+        const removedItem = couponItems[index];
+        couponItems.splice(index, 1);
+        localStorage.setItem('couponItems', JSON.stringify(couponItems));
+        const matchData = JSON.parse(localStorage.getItem('selectedMatch'));
+        if (matchData) {
+            generateEnhancedEvents(matchData);
+        }
+        updateCoupon();
+        if (couponItems.length === 0) {
+            document.getElementById('betCoupon').classList.remove('visible');
+        }
+    }
+
+    function clearCoupon() {
+        console.log('Clearing coupon');
+        couponItems = [];
+        localStorage.setItem('couponItems', JSON.stringify(couponItems));
+        document.getElementById('betCoupon').classList.remove('visible');
+        const matchData = JSON.parse(localStorage.getItem('selectedMatch'));
+        if (matchData) {
+            generateEnhancedEvents(matchData);
+        }
+        updateCoupon();
+    }
+
+    function updateCoupon() {
+        console.log('Updating coupon, couponItems:', couponItems);
+        const couponItemsElement = document.getElementById('couponItems');
+        const stakeInput = document.getElementById('stakeInput');
+        const totalOddsElement = document.getElementById('totalOdds');
+        const potentialWinElement = document.getElementById('potentialWin');
+        const placeBetBtn = document.getElementById('placeBetBtn');
+
+        couponItemsElement.innerHTML = '';
+        if (couponItems.length === 0) {
+            couponItemsElement.innerHTML = '<div class="coupon-empty">Выберите события для ставки</div>';
+            stakeInput.value = '';
+            totalOddsElement.textContent = '1.00';
+            potentialWinElement.textContent = '0.00';
+            placeBetBtn.disabled = true;
+            return;
         }
 
-        function processDeposit() {
-            console.log('Processing deposit');
-            const amount = parseFloat(document.getElementById('depositAmount').value);
-            const method = document.querySelector('.deposit-method.active')?.dataset.method;
-            if (!method) {
-                showNotification('Выберите способ пополнения');
-                return;
-            }
-            if (isNaN(amount) || amount <= 0) {
-                showNotification('Введите корректную сумму');
-                return;
-            }
-            balance += amount;
-            localStorage.setItem('balance', balance);
-            updateBalance();
-            showNotification(`Баланс пополнен на ${amount}$ через ${method}`);
-            closeDepositModal();
+        couponItems.forEach((item, index) => {
+            const couponItem = document.createElement('div');
+            couponItem.className = 'coupon-item';
+            couponItem.innerHTML = `
+                <div class="coupon-event">${item.event}</div>
+                <div class="coupon-bet">${item.bet}</div>
+                <div class="coupon-odds">
+                    <div class="odds-number">${item.odds.toFixed(2)}</div>
+                    <div class="remove-bet" onclick="removeFromCoupon(${index})"><i class="fas fa-trash"></i></div>
+                </div>
+            `;
+            couponItemsElement.appendChild(couponItem);
+        });
+
+        const totalOdds = couponItems.reduce((acc, item) => acc * item.odds, 1).toFixed(2);
+        totalOddsElement.textContent = totalOdds;
+        const stake = parseFloat(stakeInput.value) || 0;
+        const potentialWin = (stake * totalOdds).toFixed(2);
+        potentialWinElement.textContent = potentialWin;
+
+        placeBetBtn.disabled = !isLoggedIn || stake <= 0 || couponItems.length === 0;
+        if (couponItems.length > 0) {
+            document.getElementById('betCoupon').classList.add('visible');
+        }
+    }
+
+    function placeBet() {
+        console.log('Placing bet, couponItems:', couponItems);
+        if (!isLoggedIn) {
+            showModal('login');
+            showNotification('Войдите, чтобы сделать ставку');
+            return;
         }
 
-        function updateBalance() {
-            console.log('Updating balance:', balance);
-            document.getElementById('balanceDisplay').textContent = `${balance.toFixed(2)}$`;
-            document.getElementById('profileBalance').textContent = `${balance.toFixed(2)}$`;
+        const stake = parseFloat(document.getElementById('stakeInput').value);
+        if (stake <= 0 || isNaN(stake)) {
+            showNotification('Введите корректную сумму ставки');
+            return;
         }
 
-        function initSupportChat() {
-            console.log('Initializing support chat');
-            updateSupportChat();
-            const chatInput = document.getElementById('chatInput');
+        if (stake > balance) {
+            showNotification('Недостаточно средств на балансе');
+            return;
+        }
+
+        const totalOdds = couponItems.reduce((acc, item) => acc * item.odds, 1).toFixed(2);
+        const potentialWin = (stake * totalOdds).toFixed(2);
+
+        const bet = {
+            date: new Date().toISOString(),
+            event: couponItems.map(item => item.event).join(', '),
+            bet: couponItems.map(item => item.bet).join(', '),
+            odds: totalOdds,
+            stake: stake,
+            potentialWin: potentialWin
+        };
+
+        betHistory.push(bet);
+        localStorage.setItem('betHistory', JSON.stringify(betHistory));
+        balance -= stake;
+        localStorage.setItem('balance', balance);
+        updateBalance();
+        showNotification('Ставка успешно размещена!');
+        clearCoupon();
+        updateCouponHistory();
+    }
+
+    function updateCouponHistory() {
+        console.log('Updating coupon history');
+        const couponHistoryElement = document.getElementById('couponHistory');
+        couponHistoryElement.innerHTML = '';
+        if (betHistory.length === 0) {
+            couponHistoryElement.innerHTML = '<div class="coupon-empty">Нет ставок</div>';
+        } else {
+            betHistory.forEach(bet => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div class="history-date">${new Date(bet.date).toLocaleString('ru-RU')}</div>
+                    <div class="history-event">${bet.event}</div>
+                    <div class="history-details">Ставка: ${bet.bet} | Коэффициент: ${bet.odds} | Сумма: ${bet.stake}$ | Выигрыш: ${bet.potentialWin}$</div>
+                `;
+                couponHistoryElement.appendChild(item);
+            });
+        }
+    }
+
+    function openDepositModal() {
+        console.log('Opening deposit modal');
+        if (!isLoggedIn) {
+            showModal('login');
+            showNotification('Войдите, чтобы пополнить баланс');
+            return;
+        }
+        showModal('deposit');
+        document.querySelectorAll('.deposit-method').forEach(method => {
+            method.addEventListener('click', () => {
+                document.querySelectorAll('.deposit-method').forEach(m => m.classList.remove('active'));
+                method.classList.add('active');
+            });
+        });
+    }
+
+    function closeDepositModal() {
+        hideModal('deposit');
+    }
+
+    function processDeposit() {
+        console.log('Processing deposit');
+        const amount = parseFloat(document.getElementById('depositAmount').value);
+        const method = document.querySelector('.deposit-method.active')?.dataset.method;
+        if (!method) {
+            showNotification('Выберите способ пополнения');
+            return;
+        }
+        if (isNaN(amount) || amount <= 0) {
+            showNotification('Введите корректную сумму');
+            return;
+        }
+        balance += amount;
+        localStorage.setItem('balance', balance);
+        updateBalance();
+        showNotification(`Баланс пополнен на ${amount}$ через ${method}`);
+        closeDepositModal();
+    }
+
+    function updateBalance() {
+        console.log('Updating balance:', balance);
+        document.getElementById('balanceDisplay').textContent = `${balance.toFixed(2)}$`;
+        document.getElementById('profileBalance').textContent = `${balance.toFixed(2)}$`;
+    }
+
+    function initSupportChat() {
+        console.log('Initializing support chat');
+        updateSupportChat();
+        const chatInput = document.getElementById('chatInput');
+        if (chatInput) {
             chatInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -1947,156 +2028,441 @@
                 }
             });
         }
+    }
 
-        function openSupportModal() {
-            console.log('Opening support modal');
-            showModal('support');
+    function openSupportModal() {
+        console.log('Opening support modal');
+        showModal('support');
+        updateSupportChat();
+    }
+
+    function closeSupportModal() {
+        hideModal('support');
+    }
+
+    function sendSupportMessage() {
+        console.log('Sending support message');
+        const chatInput = document.getElementById('chatInput');
+        const message = chatInput.value.trim();
+        if (message) {
+            supportMessages.push({
+                text: message,
+                time: new Date().toISOString(),
+                sender: isLoggedIn ? currentUser.username : 'Гость',
+                type: 'user'
+            });
+            localStorage.setItem('supportMessages', JSON.stringify(supportMessages));
+            chatInput.value = '';
             updateSupportChat();
-        }
-
-        function closeSupportModal() {
-            hideModal('support');
-        }
-
-        function sendSupportMessage() {
-            console.log('Sending support message');
-            const chatInput = document.getElementById('chatInput');
-            const message = chatInput.value.trim();
-            if (message) {
+            setTimeout(() => {
                 supportMessages.push({
-                    text: message,
+                    text: 'Спасибо за ваше сообщение! Наш оператор ответит в ближайшее время.',
                     time: new Date().toISOString(),
-                    sender: isLoggedIn ? currentUser.username : 'Гость',
-                    type: 'user'
+                    sender: 'Support',
+                    type: 'support'
                 });
                 localStorage.setItem('supportMessages', JSON.stringify(supportMessages));
-                chatInput.value = '';
                 updateSupportChat();
-                setTimeout(() => {
-                    supportMessages.push({
-                        text: 'Спасибо за ваше сообщение! Наш оператор ответит в ближайшее время.',
-                        time: new Date().toISOString(),
-                        sender: 'Support',
-                        type: 'support'
-                    });
-                    localStorage.setItem('supportMessages', JSON.stringify(supportMessages));
-                    updateSupportChat();
-                }, 1000);
-            }
+            }, 1000);
         }
+    }
 
-        function updateSupportChat() {
-            console.log('Updating support chat');
-            const chatContainer = document.getElementById('supportChat');
-            chatContainer.innerHTML = '';
-            supportMessages.forEach(message => {
-                const messageElement = document.createElement('div');
-                messageElement.className = `chat-message ${message.type}`;
-                messageElement.innerHTML = `
-                    <div class="message-text">${message.text}</div>
-                    <div class="message-time">${new Date(message.time).toLocaleTimeString('ru-RU')}</div>
-                `;
-                chatContainer.appendChild(messageElement);
-            });
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
+    function updateSupportChat() {
+        console.log('Updating support chat');
+        const chatContainer = document.getElementById('supportChat');
+        if (!chatContainer) return;
+        chatContainer.innerHTML = '';
+        supportMessages.forEach(message => {
+            const messageElement = document.createElement('div');
+            messageElement.className = `chat-message ${message.type}`;
+            messageElement.innerHTML = `
+                <div class="message-text">${message.text}</div>
+                <div class="message-time">${new Date(message.time).toLocaleTimeString('ru-RU')}</div>
+            `;
+            chatContainer.appendChild(messageElement);
+        });
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
 
-        function showModal(modalId) {
-            console.log('Showing modal:', modalId);
-            document.getElementById(`${modalId}Modal`).classList.add('show');
-        }
+    function showModal(modalId) {
+        console.log('Showing modal:', modalId);
+        document.getElementById(`${modalId}Modal`).classList.add('show');
+    }
 
-        function hideModal(modalId) {
-            console.log('Hiding modal:', modalId);
-            document.getElementById(`${modalId}Modal`).classList.remove('show');
-        }
+    function hideModal(modalId) {
+        console.log('Hiding modal:', modalId);
+        document.getElementById(`${modalId}Modal`).classList.remove('show');
+    }
 
-        function showNotification(message) {
-            console.log('Showing notification:', message);
-            const notification = document.getElementById('global-notification');
+    function showNotification(message) {
+        console.log('Showing notification:', message);
+        const notification = document.getElementById('global-notification');
+        if (notification) {
             notification.textContent = message;
             notification.classList.add('show');
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
         }
-
-        let mainEvents, totalEvents, handicapEvents, additionalEvents, statsEvents;
-
-        function generateEvents(matchData) {
-            const eventName = `${matchData.teamHome} - ${matchData.teamAway}`;
-            mainEvents = [
-                { name: eventName, bet: 'П1', odds: 2.5, matchId: matchData.id },
-                { name: eventName, bet: 'X', odds: 3.2, matchId: matchData.id },
-                { name: eventName, bet: 'П2', odds: 2.8, matchId: matchData.id },
-                { name: eventName, bet: 'Обе забьют: Да', odds: 1.7, matchId: matchData.id },
-                { name: eventName, bet: 'Обе забьют: Нет', odds: 2.0, matchId: matchData.id }
-            ];
-            totalEvents = [
-                { name: eventName, bet: 'Тотал > 2.5', odds: 1.9, matchId: matchData.id },
-                { name: eventName, bet: 'Тотал < 2.5', odds: 1.8, matchId: matchData.id },
-                { name: eventName, bet: 'Тотал > 3.5', odds: 2.8, matchId: matchData.id },
-                { name: eventName, bet: 'Тотал < 3.5', odds: 1.4, matchId: matchData.id }
-            ];
-            handicapEvents = [
-                { name: eventName, bet: 'Ф1 (-1)', odds: 3.2, matchId: matchData.id },
-                { name: eventName, bet: 'Ф2 (+1)', odds: 1.5, matchId: matchData.id },
-                { name: eventName, bet: 'Ф1 (0)', odds: 1.8, matchId: matchData.id },
-                { name: eventName, bet: 'Ф2 (0)', odds: 2.1, matchId: matchData.id }
-            ];
-            additionalEvents = [
-                { name: eventName, bet: 'Точный счет 1:0', odds: 7.0, matchId: matchData.id },
-                { name: eventName, bet: 'Точный счет 2:1', odds: 8.0, matchId: matchData.id },
-                { name: eventName, bet: 'Точный счет 2:0', odds: 9.0, matchId: matchData.id },
-                { name: eventName, bet: 'Точный счет 0:0', odds: 10.0, matchId: matchData.id }
-            ];
-            statsEvents = [
-                { name: eventName, bet: `${matchData.teamHome} забьет первой`, odds: 1.8, matchId: matchData.id },
-                { name: eventName, bet: `${matchData.teamAway} забьет первой`, odds: 2.0, matchId: matchData.id },
-                { name: eventName, bet: 'Гол в 1 тайме: Да', odds: 1.5, matchId: matchData.id },
-                { name: eventName, bet: 'Гол в 1 тайме: Нет', odds: 2.5, matchId: matchData.id }
-            ];
-            fillEvents('mainEvents', mainEvents);
-            fillEvents('totalEvents', totalEvents);
-            fillEvents('handicapEvents', handicapEvents);
-            fillEvents('additionalEvents', additionalEvents);
-            fillEvents('statsEvents', statsEvents);
+        if (TelegramWebApp) {
+            TelegramWebApp.showAlert(message);
         }
+    }
 
-        function fillEvents(containerId, events) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            container.innerHTML = '';
-            events.forEach(event => {
-                const eventElement = document.createElement('div');
-                eventElement.className = 'event-item';
-                eventElement.dataset.event = event.name;
-                eventElement.dataset.bet = event.bet;
-                eventElement.dataset.odds = event.odds;
-                eventElement.dataset.matchId = event.matchId;
-                const isSelected = couponItems.some(item => item.event === event.name && item.bet === event.bet && item.matchId === event.matchId);
-                if (isSelected) {
-                    eventElement.classList.add('selected');
+    // **ENHANCED EVENTS GENERATION**
+    let mainEvents, totalEvents, handicapEvents, additionalEvents, statsEvents;
+
+    function generateEnhancedEvents(matchData) {
+        console.log('Generating enhanced events for:', matchData.id);
+        const eventName = `${matchData.teamHome} - ${matchData.teamAway}`;
+        const matchId = matchData.id || 'default';
+        
+        // **ОСНОВНЫЕ СОБЫТИЯ**
+        mainEvents = [
+            { name: eventName, bet: 'П1', odds: matchData.mainOdds?.p1 || 2.0, matchId },
+            { name: eventName, bet: 'Ничья', odds: matchData.mainOdds?.x || 3.0, matchId },
+            { name: eventName, bet: 'П2', odds: matchData.mainOdds?.p2 || 2.5, matchId },
+            { name: eventName, bet: 'Обе забьют: Да', odds: matchData.additionalMarkets?.bothTeamsToScore?.yes || 1.7, matchId },
+            { name: eventName, bet: 'Обе забьют: Нет', odds: matchData.additionalMarkets?.bothTeamsToScore?.no || 2.0, matchId }
+        ];
+        
+        // **ТОТАЛЫ**
+        totalEvents = [
+            { name: eventName, bet: 'Тотал больше 2.5', odds: matchData.totalOdds?.over25 || 1.85, matchId },
+            { name: eventName, bet: 'Тотал меньше 2.5', odds: matchData.totalOdds?.under25 || 1.95, matchId },
+            { name: eventName, bet: 'Тотал больше 3.5', odds: matchData.totalOdds?.over35 || 2.80, matchId },
+            { name: eventName, bet: 'Тотал меньше 3.5', odds: matchData.totalOdds?.under35 || 1.40, matchId },
+            { name: eventName, bet: 'Тотал больше 1.5', odds: 1.25, matchId },
+            { name: eventName, bet: 'Тотал меньше 1.5', odds: 3.75, matchId }
+        ];
+        
+        // **ФОРЫ**
+        handicapEvents = [
+            { name: eventName, bet: 'Фора 1 (0)', odds: matchData.handicapOdds?.home0 || 1.90, matchId },
+            { name: eventName, bet: 'Фора 2 (0)', odds: matchData.handicapOdds?.away0 || 1.90, matchId },
+            { name: eventName, bet: 'Фора 1 (-1)', odds: matchData.handicapOdds?.homeMinus1 || 3.10, matchId },
+            { name: eventName, bet: 'Фора 2 (+1)', odds: matchData.handicapOdds?.awayPlus1 || 1.40, matchId },
+            { name: eventName, bet: 'Фора 1 (+1)', odds: 1.25, matchId },
+            { name: eventName, bet: 'Фора 2 (-1)', odds: 3.75, matchId }
+        ];
+        
+        // **ДОПОЛНИТЕЛЬНЫЕ СОБЫТИЯ**
+        additionalEvents = [
+            // Точный счёт
+            ...(matchData.additionalMarkets?.correctScore ? 
+                Object.entries(matchData.additionalMarkets.correctScore).slice(0, 4).map(([score, odds]) => ({
+                    name: eventName, 
+                    bet: `Точный счёт ${score}`, 
+                    odds: odds, 
+                    matchId 
+                })) : [
+                    { name: eventName, bet: 'Точный счёт 1:0', odds: 7.0, matchId },
+                    { name: eventName, bet: 'Точный счёт 2:1', odds: 8.0, matchId },
+                    { name: eventName, bet: 'Точный счёт 1:1', odds: 6.0, matchId },
+                    { name: eventName, bet: 'Точный счёт 0:1', odds: 7.5, matchId }
+                ]
+            ),
+            // Полувремя
+            ...(matchData.additionalMarkets?.halftimeResult ? 
+                Object.entries(matchData.additionalMarkets.halftimeResult).map(([result, odds]) => ({
+                    name: eventName, 
+                    bet: `1-й тайм: ${result === 'home' ? 'П1' : result === 'draw' ? 'X' : 'П2'}`, 
+                    odds: odds, 
+                    matchId 
+                })) : [
+                    { name: eventName, bet: '1-й тайм: П1', odds: 3.25, matchId },
+                    { name: eventName, bet: '1-й тайм: Ничья', odds: 2.10, matchId },
+                    { name: eventName, bet: '1-й тайм: П2', odds: 4.50, matchId }
+                ]
+            )
+        ];
+        
+        // **СТАТИСТИКА И АНАЛИТИКА**
+        statsEvents = [
+            // Форма команд
+            { 
+                name: eventName, 
+                bet: `${matchData.teamHome} - Форма: ${matchData.homeTeamStats?.form?.join(' ') || 'W D W L W'}`, 
+                odds: 1.0, 
+                matchId, 
+                isStat: true 
+            },
+            { 
+                name: eventName, 
+                bet: `${matchData.teamAway} - Форма: ${matchData.awayTeamStats?.form?.join(' ') || 'W W L D W'}`, 
+                odds: 1.0, 
+                matchId, 
+                isStat: true 
+            },
+            
+            // H2H статистика
+            { 
+                name: eventName, 
+                bet: `H2H: ${matchData.headToHead?.homeWins || 2}-${matchData.headToHead?.draws || 1}-${matchData.headToHead?.awayWins || 2}`, 
+                odds: 1.0, 
+                matchId, 
+                isStat: true 
+            },
+            
+            // Домашняя/гостевая статистика
+            { 
+                name: eventName, 
+                bet: `${matchData.teamHome} дома: ${matchData.homeTeamStats?.homeStats?.wins || 2}-${matchData.homeTeamStats?.homeStats?.draws || 1}-${matchData.homeTeamStats?.homeStats?.losses || 0}`, 
+                odds: 1.0, 
+                matchId, 
+                isStat: true 
+            },
+            { 
+                name: eventName, 
+                bet: `${matchData.teamAway} в гостях: ${matchData.awayTeamStats?.awayStats?.wins || 1}-${matchData.awayTeamStats?.awayStats?.draws || 0}-${matchData.awayTeamStats?.awayStats?.losses || 1}`, 
+                odds: 1.0, 
+                matchId, 
+                isStat: true 
+            },
+            
+            // Прогнозы
+            ...(matchData.predictions ? [
+                { 
+                    name: eventName, 
+                    bet: `Прогноз: ${matchData.predictions.winProbability?.home || 42}% | Ничья: ${matchData.predictions.winProbability?.draw || 28}% | ${matchData.predictions.winProbability?.away || 30}%`, 
+                    odds: 1.0, 
+                    matchId, 
+                    isStat: true 
+                },
+                { 
+                    name: eventName, 
+                    bet: `Ожидаемые голы: ${matchData.predictions.expectedGoals?.home || 1.4} - ${matchData.predictions.expectedGoals?.away || 1.2}`, 
+                    odds: 1.0, 
+                    matchId, 
+                    isStat: true 
                 }
-                eventElement.innerHTML = `
-                    <div class="event-name">${event.bet}</div>
-                    <div class="event-odds">${event.odds}</div>
+            ] : [])
+        ];
+        
+        // **ЗАПОЛНЕНИЕ СОБЫТИЙ**
+        fillEvents('mainEvents', mainEvents);
+        fillEvents('totalEvents', totalEvents);
+        fillEvents('handicapEvents', handicapEvents);
+        fillEvents('additionalEvents', additionalEvents);
+        fillEvents('statsEvents', statsEvents);
+        
+        // **ДОПОЛНИТЕЛЬНЫЕ ЭЛЕМЕНТЫ**
+        addMatchInfo(matchData);
+        addLiveStats(matchData);
+        addTeamStats(matchData);
+    }
+
+    // **ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ О МАТЧЕ**
+    function addMatchInfo(matchData) {
+        const matchHeader = document.querySelector('.match-header');
+        if (!matchHeader) return;
+        
+        // Удаляем старый match info если есть
+        const oldMatchInfo = document.getElementById('matchInfo');
+        if (oldMatchInfo) oldMatchInfo.remove();
+        
+        const matchInfo = document.createElement('div');
+        matchInfo.id = 'matchInfo';
+        matchInfo.style.cssText = `
+            background: rgba(40,40,40,0.7); 
+            border-radius: 6px; padding: 10px; 
+            margin-top: 10px; font-size: 0.8rem; 
+            display: flex; justify-content: space-between; 
+            align-items: center; color: var(--text-secondary);
+            border: 1px solid #444;
+        `;
+        
+        const venue = matchData.matchInfo?.venue || 'Неизвестно';
+        const weather = matchData.matchInfo?.weather || '';
+        const referee = matchData.matchInfo?.referee || '';
+        
+        matchInfo.innerHTML = `
+            <span><i class="fas fa-map-marker-alt"></i> ${venue}</span>
+            <span>${weather}</span>
+            <span><i class="fas fa-user-tie"></i> ${referee}</span>
+        `;
+        
+        matchHeader.parentNode.insertBefore(matchInfo, matchHeader.nextSibling);
+    }
+
+    // **LIVE СТАТИСТИКА**
+    function addLiveStats(matchData) {
+        if (!matchData.liveStats || matchData.status !== 'live') return;
+        
+        const statsSection = document.querySelector('#statsEvents').closest('.events-section');
+        if (!statsSection) return;
+        
+        // Удаляем старую live статистику
+        const oldLiveStats = document.getElementById('liveStats');
+        if (oldLiveStats) oldLiveStats.remove();
+        
+        const liveStats = document.createElement('div');
+        liveStats.id = 'liveStats';
+        liveStats.style.cssText = `
+            background: rgba(255,68,68,0.15); 
+            border: 1px solid #ff4444; 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin-top: 15px;
+            font-size: 0.85rem;
+        `;
+        
+        liveStats.innerHTML = `
+            <div style="font-size: 1.1rem; color: #ff4444; margin-bottom: 10px; text-align: center; font-weight: bold;">
+                LIVE СТАТИСТИКА
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; text-align: center;">
+                <div>
+                    <div style="color: var(--text-secondary); margin-bottom: 4px;">Владение мячом</div>
+                    <div style="font-size: 1.3rem; font-weight: bold; color: var(--primary-color);">
+                        ${matchData.liveStats.possession.home}% - ${matchData.liveStats.possession.away}%
+                    </div>
+                </div>
+                <div>
+                    <div style="color: var(--text-secondary); margin-bottom: 4px;">Удары в створ</div>
+                    <div style="font-size: 1.3rem; font-weight: bold; color: var(--primary-color);">
+                        ${matchData.liveStats.shotsOnTarget.home} - ${matchData.liveStats.shotsOnTarget.away}
+                    </div>
+                </div>
+                <div>
+                    <div style="color: var(--text-secondary); margin-bottom: 4px;">Угловые</div>
+                    <div style="font-size: 1.3rem; font-weight: bold; color: var(--primary-color);">
+                        ${matchData.liveStats.corners.home} - ${matchData.liveStats.corners.away}
+                    </div>
+                </div>
+                <div>
+                    <div style="color: var(--text-secondary); margin-bottom: 4px;">Жёлтые карточки</div>
+                    <div style="font-size: 1.3rem; font-weight: bold; color: var(--primary-color);">
+                        ${matchData.liveStats.yellowCards.home} - ${matchData.liveStats.yellowCards.away}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        statsSection.appendChild(liveStats);
+    }
+
+    // **СТАТИСТИКА КОМАНД**
+    function addTeamStats(matchData) {
+        if (!matchData.homeTeamStats || !matchData.awayTeamStats) return;
+        
+        const statsSection = document.querySelector('#statsEvents').closest('.events-section');
+        if (!statsSection) return;
+        
+        // Удаляем старую статистику команд
+        const oldTeamStats = document.getElementById('teamStats');
+        if (oldTeamStats) oldTeamStats.remove();
+        
+        const teamStats = document.createElement('div');
+        teamStats.id = 'teamStats';
+        teamStats.style.cssText = `
+            background: rgba(40,40,40,0.7); 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin-top: 15px;
+            border: 1px solid #444;
+        `;
+        
+        const homeForm = matchData.homeTeamStats.form ? 
+            matchData.homeTeamStats.form.map(f => `<span style="color: ${f === 'W' ? '#4caf50' : f === 'D' ? '#ffa500' : '#ff4444'}; font-weight: bold;">${f}</span>`).join(' ') : 
+            'W D W L W';
+            
+        const awayForm = matchData.awayTeamStats.form ? 
+            matchData.awayTeamStats.form.map(f => `<span style="color: ${f === 'W' ? '#4caf50' : f === 'D' ? '#ffa500' : '#ff4444'}; font-weight: bold;">${f}</span>`).join(' ') : 
+            'W W L D W';
+        
+        const h2h = matchData.headToHead ? 
+            `${matchData.headToHead.homeWins}-${matchData.headToHead.draws}-${matchData.headToHead.awayWins}` : 
+            '2-1-2';
+        
+        teamStats.innerHTML = `
+            <div style="font-size: 1.1rem; color: var(--primary-color); margin-bottom: 12px; text-align: center; font-weight: bold;">
+                📊 СТАТИСТИКА КОМАНД
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center;">
+                <div>
+                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">${matchData.teamHome}</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 6px;">Форма (5 матчей)</div>
+                    <div style="font-size: 0.8rem; margin-bottom: 8px;">${homeForm}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Сезон: ${matchData.homeTeamStats.seasonStats?.wins || 3}-${matchData.homeTeamStats.seasonStats?.draws || 1}-${matchData.homeTeamStats.seasonStats?.losses || 1}</div>
+                </div>
+                <div style="text-align: center; border-left: 1px solid #444; padding-left: 15px;">
+                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">H2H</div>
+                    <div style="font-size: 1.2rem; font-weight: bold; color: var(--primary-color); margin-bottom: 8px;">${h2h}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">${matchData.teamAway} - Форма</div>
+                    <div style="font-size: 0.8rem; margin-top: 4px;">${awayForm}</div>
+                </div>
+            </div>
+        `;
+        
+        statsSection.appendChild(teamStats);
+    }
+
+    // **ФУНКЦИЯ ЗАПОЛНЕНИЯ СОБЫТИЙ - обновлённая**
+    function fillEvents(containerId, events) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        
+        events.forEach(event => {
+            const eventElement = document.createElement('div');
+            eventElement.className = 'event-item';
+            eventElement.dataset.event = event.name;
+            eventElement.dataset.bet = event.bet;
+            eventElement.dataset.odds = event.odds;
+            eventElement.dataset.matchId = event.matchId;
+            
+            // Проверяем, выбрано ли событие
+            const isSelected = couponItems.some(item => 
+                item.event === event.name && 
+                item.bet === event.bet && 
+                item.matchId === event.matchId
+            );
+            
+            if (isSelected) {
+                eventElement.classList.add('selected');
+            }
+            
+            // Если это статистика - особый стиль
+            if (event.isStat) {
+                eventElement.style.cssText = `
+                    background: rgba(40,40,40,0.5); 
+                    cursor: default; 
+                    opacity: 0.7; 
+                    border-style: dashed;
                 `;
+                eventElement.onclick = null; // Отключаем клик для статистики
+            }
+            
+            eventElement.innerHTML = `
+                <div class="event-name">${event.bet}</div>
+                <div class="event-odds">${event.isStat ? '' : event.odds.toFixed(2)}</div>
+            `;
+            
+            if (!event.isStat) {
                 eventElement.addEventListener('click', () => {
                     const added = addToCoupon(event.name, event.bet, event.odds, event.matchId);
                     if (added) {
                         eventElement.classList.add('selected');
-                        showNotification(`Добавлено в купон: ${event.bet} (${event.odds})`);
+                        showNotification(`Добавлено в купон: ${event.bet} (${event.odds.toFixed(2)})`);
+                        TelegramWebApp?.HapticFeedback.impactOccurred('medium');
                     } else {
                         removeFromCouponByEvent(event.name, event.bet, event.matchId);
                         eventElement.classList.remove('selected');
                         showNotification(`Удалено из купона: ${event.bet}`);
+                        TelegramWebApp?.HapticFeedback.impactOccurred('light');
                     }
                     updateCoupon();
                 });
-                container.appendChild(eventElement);
-            });
-        }
-    </script>
+            }
+            
+            container.appendChild(eventElement);
+        });
+    }
+
+    // **ОСТАЛЬНЫЕ ФУНКЦИИ - без изменений**
+    // (connectTelegram, updateAuthUI, performLogout, openProfile, etc.)
+    // ... весь остальной код остаётся как есть ...
+</script>
 </body>
 </html>
