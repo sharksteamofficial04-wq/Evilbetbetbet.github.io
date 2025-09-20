@@ -3,115 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPORT - EVILBET</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <title>СПОРТ - EVILBET</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        @font-face {
+            font-family: 'Bebas Neue Cyrillic';
+            src: local('Bebas Neue Cyrillic'), local('BebasNeueCyrillic'),
+                 url('https://fonts.gstatic.com/s/bebasneue/v9/JTUSjIg69CK48gW7PXoo9Wlhyw.woff2') format('woff2');
+            unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Bebas Neue';
+            src: local('Bebas Neue'), local('BebasNeue'),
+                 url('https://fonts.gstatic.com/s/bebasneue/v9/JTUSjIg69CK48gW7PXoo9Wlhyw.woff2') format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        :root {
+            --primary-color: #ff3333;
+            --primary-hover: #cc0000;
+            --secondary-color: #ff6666;
+            --bg-primary: #121212;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #fff;
+            --text-secondary: #aaa;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        @font-face {
-            font-family: 'Bebas Neue Cyrillic';
-            src: local('Bebas Neue Cyrillic'), local('BebasNeueCyrillic'),
-                 url('https://fonts.gstatic.com/s/bebasneue/v9/JTUSjIg69CK48gW7PXoo9Wlhyw.woff2') format('woff2');
-            unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-        }
-
         body {
-            background: linear-gradient(135deg, #0c0c0c, #1a1a1a);
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
             font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
-            color: #ffffff;
-            padding: 20px;
-            margin: 0;
+            color: var(--text-primary);
             min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        /* Шапка */
+        .tg-ready {
+            padding-top: 60px;
+        }
+
+        /* HEADER - копия из match-events */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 5px 15px;
-            background: rgba(37, 37, 37, 0.8);
+            padding: 8px 16px;
+            background: rgba(18, 18, 18, 0.95);
             position: fixed;
-            width: calc(100% - 40px);
+            width: 100vw;
+            left: 0;
             top: 0;
             z-index: 100;
-            height: 50px;
+            height: 60px;
             border-bottom: 1px solid #333;
+            backdrop-filter: blur(10px);
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
+            flex: 1;
         }
 
         #logo.header-logo {
-            width: 80px;
+            width: 70px;
             height: auto;
         }
 
         nav ul {
             list-style: none;
             display: flex;
-            gap: 15px;
+            gap: 12px;
         }
 
         nav ul li a {
-            color: #fff;
+            color: var(--text-primary);
             text-decoration: none;
-            font-size: 1.2rem;
+            font-size: 1rem;
+            font-weight: 400;
             transition: color 0.3s ease;
+            text-transform: uppercase;
         }
 
         nav ul li a:hover {
-            color: #ff3333;
+            color: var(--primary-color);
         }
 
         .header-right {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
+            flex-shrink: 0;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             background: rgba(30, 30, 30, 0.8);
-            border-radius: 8px;
-            padding: 5px 12px;
+            border-radius: 6px;
+            padding: 6px 12px;
         }
 
         .balance-item {
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-width: 60px;
         }
 
         .balance-label {
-            font-size: 0.8rem;
-            color: #aaa;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
             margin-bottom: 2px;
         }
 
         .balance-value {
-            font-size: 1.1rem;
-            color: #4caf50;
-            font-weight: bold;
+            font-size: 1rem;
+            color: var(--primary-color);
+            font-weight: 400;
         }
 
         .user-name {
-            font-size: 1rem;
-            color: #fff;
-            padding: 4px 10px;
-            background: rgba(255, 51, 51, 0.2);
-            border-radius: 5px;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            padding: 4px 8px;
+            background: rgba(0, 255, 136, 0.2);
+            border-radius: 4px;
             cursor: pointer;
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .auth-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .login-btn {
+            background: #333;
+            color: var(--text-primary);
+        }
+
+        .login-btn:hover {
+            background: #444;
+        }
+
+        .register-btn {
+            background: var(--primary-color);
+            color: #000;
+        }
+
+        .register-btn:hover {
+            background: var(--primary-hover);
         }
 
         .notifications {
@@ -119,123 +190,204 @@
         }
 
         .notifications-btn {
-            background: #ff3333;
-            width: 35px;
-            height: 35px;
+            background: var(--primary-color);
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            font-size: 1rem;
+            color: #000;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s;
             border: none;
         }
 
         .notifications-btn:hover {
-            background: #ff5555;
+            background: var(--primary-hover);
             transform: scale(1.05);
         }
 
         .notification-count {
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: -4px;
+            right: -4px;
             background: #4caf50;
             color: #fff;
-            font-size: 0.7rem;
-            width: 18px;
-            height: 18px;
+            font-size: 0.6rem;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: 400;
         }
 
-        .contact-btn {
-            background: #ff3333;
-            padding: 4px 12px;
-            border-radius: 5px;
-            text-decoration: none;
-            color: #fff;
-            font-size: 0.9rem;
+        .deposit-btn {
+            background: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: #000;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
             white-space: nowrap;
+            font-weight: 400;
+            text-transform: uppercase;
         }
 
-        /* Основной контент */
+        .deposit-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        /* MAIN CONTENT */
         .main-container {
-            max-width: 100%;
-            margin: 70px auto 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
             display: grid;
-            grid-template-columns: 1fr 340px;
+            grid-template-columns: 1fr;
             gap: 20px;
         }
 
         .page-title {
-            font-size: 3rem;
-            color: #fff;
-            margin-bottom: 20px;
+            font-size: 2.5rem;
+            color: var(--primary-color);
             text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            grid-column: 1 / -1;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            letter-spacing: 2px;
         }
 
-        /* Виды спорта */
-        .sports-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        /* FILTERS */
+        .filters-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
             gap: 15px;
-            margin-bottom: 30px;
-            grid-column: 1 / -1;
+        }
+
+        .sport-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .sport-item {
-            background: rgba(30, 30, 30, 0.8);
+            background: rgba(26, 26, 26, 0.9);
+            border: 1px solid #333;
             border-radius: 8px;
-            padding: 20px;
-            text-align: center;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            text-transform: uppercase;
+        }
+
+        .sport-item:hover, .sport-item.active {
+            background: var(--primary-color);
+            color: #000;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 51, 51, 0.3);
+        }
+
+        .status-filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .status-btn {
+            background: rgba(26, 26, 26, 0.9);
+            border: 1px solid #333;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s;
-            border: 2px solid transparent;
+            font-size: 0.85rem;
+            text-transform: uppercase;
         }
 
-        .sport-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(255, 51, 51, 0.3);
+        .status-btn:hover, .status-btn.active {
+            background: var(--primary-color);
+            color: #000;
+            border-color: var(--primary-color);
         }
 
-        .sport-item.active {
-            border-color: #ff3333;
-            background: rgba(50, 30, 30, 0.9);
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 300px;
         }
 
-        .sport-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 10px 40px 10px 15px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
         }
 
-        .sport-name {
-            font-size: 1.5rem;
-            color: #fff;
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
         }
 
-        /* Контент с матчами */
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* MATCHES SECTION */
         .matches-section {
-            background: rgba(30, 30, 30, 0.8);
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-            grid-column: 1 / 2;
+            background: rgba(18, 18, 18, 0.9);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        .matches-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), transparent);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .section-title {
-            font-size: 2rem;
-            color: #ff3333;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
             border-bottom: 1px solid #333;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .date-navigation {
@@ -243,13 +395,14 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding-bottom: 10px;
+            padding-bottom: 12px;
             border-bottom: 1px solid #333;
         }
 
         .date-title {
-            font-size: 1.5rem;
-            color: #fff;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            font-weight: 400;
         }
 
         .date-arrows {
@@ -266,34 +419,55 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background 0.3s;
-            font-size: 1.2rem;
+            transition: all 0.3s;
+            color: var(--text-primary);
+            border: 1px solid #444;
         }
 
         .date-arrow:hover {
-            background: #ff3333;
+            background: var(--primary-color);
+            color: #000;
+            transform: scale(1.05);
         }
 
-        /* Стили для матчей */
+        /* MATCHES GRID */
         .matches-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
         }
 
         .match-card {
-            background: rgba(40, 40, 40, 0.9);
-            border-radius: 8px;
+            background: rgba(26, 26, 26, 0.9);
+            border-radius: 12px;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s;
             cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .match-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), transparent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
 
         .match-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(255, 51, 51, 0.2);
+            box-shadow: 0 12px 32px rgba(255, 51, 51, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .match-card:hover::before {
+            transform: scaleX(1);
         }
 
         .match-header {
@@ -301,42 +475,40 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
         }
 
         .match-time {
-            font-size: 1.2rem;
-            color: #ff3333;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 5px 10px;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            background: rgba(0, 255, 136, 0.1);
+            padding: 6px 12px;
             border-radius: 4px;
+            border: 1px solid var(--primary-color);
+            font-weight: 400;
         }
 
         .match-league {
-            font-size: 1rem;
-            color: #aaa;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
         }
 
         .match-teams {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            gap: 20px;
         }
 
         .team {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
-            width: 45%;
-        }
-
-        .team-home {
-            align-items: flex-start;
-        }
-
-        .team-away {
-            align-items: flex-end;
+            gap: 8px;
+            flex: 1;
         }
 
         .team-logo {
@@ -349,169 +521,250 @@
             justify-content: center;
             font-size: 1.2rem;
             border: 2px solid #444;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            text-transform: uppercase;
         }
 
         .team-name {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             text-align: center;
+            max-width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .match-vs {
-            font-size: 1.2rem;
-            color: #aaa;
-            width: 10%;
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            min-width: 30px;
             text-align: center;
         }
 
         .match-odds {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
         }
 
         .odds-item {
-            background: #333;
-            padding: 15px 10px;
+            flex: 1;
+            background: rgba(255, 51, 51, 0.1);
+            border: 1px solid rgba(255, 51, 51, 0.3);
             border-radius: 6px;
+            padding: 10px 8px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
-        .odds-item:hover {
-            background: #ff3333;
+        .odds-item:hover, .odds-item.selected {
+            background: var(--primary-color);
+            color: #000;
             transform: scale(1.05);
-        }
-
-        .odds-item.selected {
-            background: #ff3333;
-            box-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+            border-color: var(--primary-color);
         }
 
         .odds-type {
-            font-size: 1rem;
-            color: #aaa;
-            margin-bottom: 5px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            opacity: 0.8;
         }
 
         .odds-value {
-            font-size: 1.4rem;
-            font-weight: bold;
+            font-size: 1.3rem;
+            font-weight: 400;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
-        /* Купон ставок */
+        .no-matches {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* BET COUPON - копия из match-events */
         .bet-coupon {
-            background: rgba(30, 30, 30, 0.9);
-            border-radius: 8px;
+            background: rgba(20, 20, 20, 0.98);
+            border-radius: 12px;
             padding: 20px;
-            position: sticky;
-            top: 80px;
-            width: 300px;
-            max-height: 80vh;
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 320px;
+            max-height: 70vh;
             overflow-y: auto;
             z-index: 90;
+            display: block;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
+        }
+
+        .bet-coupon.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .bet-coupon:not(.visible) {
+            transform: translateX(100%);
+        }
+
+        .coupon-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #333;
+            color: var(--text-primary);
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .coupon-close:hover {
+            background: var(--primary-color);
+            color: #000;
         }
 
         .coupon-tabs {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            gap: 4px;
         }
 
         .coupon-tab {
             flex: 1;
             background: #333;
-            color: #fff;
+            color: var(--text-primary);
             border: none;
             padding: 8px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
-            font-size: 1rem;
+            font-size: 0.9rem;
             text-align: center;
-            margin-right: 5px;
-        }
-
-        .coupon-tab:last-child {
-            margin-right: 0;
+            transition: background 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .coupon-tab.active {
-            background: #ff3333;
+            background: var(--primary-color);
+            color: #000;
+        }
+
+        .coupon-tab:hover {
+            background: var(--primary-hover);
+            color: #000;
         }
 
         .coupon-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
             border-bottom: 1px solid #333;
         }
 
         .coupon-title {
-            font-size: 1.5rem;
-            color: #ff3333;
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .clear-coupon {
             background: #333;
-            color: #fff;
+            color: var(--text-primary);
             border: none;
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
             font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
-            font-size: 1rem;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+            text-transform: uppercase;
         }
 
         .clear-coupon:hover {
-            background: #ff3333;
+            background: var(--primary-color);
+            color: #000;
         }
 
         .coupon-items, .coupon-history {
-            margin-bottom: 20px;
-            max-height: 300px;
+            margin-bottom: 16px;
+            max-height: 250px;
             overflow-y: auto;
         }
 
-        .coupon-history::-webkit-scrollbar, .modal-body::-webkit-scrollbar {
-            width: 8px;
+        .coupon-items::-webkit-scrollbar,
+        .coupon-history::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .coupon-history::-webkit-scrollbar-track, .modal-body::-webkit-scrollbar-track {
+        .coupon-items::-webkit-scrollbar-track,
+        .coupon-history::-webkit-scrollbar-track {
             background: #222;
-            border-radius: 4px;
+            border-radius: 3px;
         }
 
-        .coupon-history::-webkit-scrollbar-thumb, .modal-body::-webkit-scrollbar-thumb {
-            background: #ff3333;
-            border-radius: 4px;
+        .coupon-items::-webkit-scrollbar-thumb,
+        .coupon-history::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
         }
 
-        .coupon-history::-webkit-scrollbar-thumb:hover, .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #ff5555;
+        .coupon-items::-webkit-scrollbar-thumb:hover,
+        .coupon-history::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-hover);
         }
 
         .coupon-item {
             background: rgba(40, 40, 40, 0.9);
             border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
             display: flex;
             flex-direction: column;
+            border: 1px solid #444;
+            transition: all 0.3s;
+        }
+
+        .coupon-item:hover {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--primary-color);
         }
 
         .coupon-event {
-            font-size: 1rem;
-            margin-bottom: 5px;
-            color: #fff;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .coupon-bet {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-bottom: 5px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
         }
 
         .coupon-odds {
@@ -522,124 +775,145 @@
 
         .odds-number {
             font-size: 1.1rem;
-            color: #ff3333;
+            color: var(--primary-color);
+            font-weight: 400;
         }
 
         .remove-bet {
-            color: #ff3333;
+            color: var(--primary-color);
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+            font-weight: 400;
+            background: none;
+            border: none;
+        }
+
+        .remove-bet:hover {
+            color: var(--primary-hover);
+            transform: scale(1.2);
+        }
+
+        .coupon-empty {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .coupon-total {
-            margin-top: 15px;
-            padding-top: 15px;
+            margin-top: 12px;
+            padding-top: 12px;
             border-top: 1px solid #333;
         }
 
         .total-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            align-items: center;
+            margin-bottom: 8px;
         }
 
         .total-label {
-            font-size: 1.1rem;
-            color: #aaa;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
         }
 
         .total-value {
-            font-size: 1.1rem;
-            color: #fff;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-weight: 400;
         }
 
         .stake-input {
             background: #333;
             border: 1px solid #444;
-            border-radius: 4px;
-            padding: 10px;
-            color: #fff;
+            border-radius: 6px;
+            padding: 12px;
+            color: var(--text-primary);
             font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1rem;
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            transition: border-color 0.3s;
+            text-transform: uppercase;
+        }
+
+        .stake-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
         }
 
         .place-bet-btn {
-            background: #ff3333;
-            color: #fff;
+            background: var(--primary-color);
+            color: #000;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             padding: 12px;
             font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             width: 100%;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            text-shadow: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .place-bet-btn:hover {
-            background: #ff5555;
+        .place-bet-btn:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: scale(1.02);
         }
 
         .place-bet-btn:disabled {
             background: #555;
+            color: var(--text-primary);
             cursor: not-allowed;
+            opacity: 0.6;
         }
 
-        /* Кнопка поддержки */
+        /* SUPPORT BUTTON */
         .support-button {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 60px;
-            height: 60px;
-            background: #ff3333;
+            width: 56px;
+            height: 56px;
+            background: var(--primary-color);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            font-size: 1.5rem;
+            color: #000;
+            font-size: 1.4rem;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            z-index: 90;
+            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+            z-index: 80;
             transition: all 0.3s;
         }
 
         .support-button:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
         }
 
-        /* Уведомления */
-        #global-notification {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            background: #4caf50;
-            color: #fff;
-            padding: 15px 20px;
-            border-radius: 5px;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s;
-            max-width: 300px;
-        }
-
-        /* Модалки */
+        /* MODALS - копия из match-events */
         .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 200;
             justify-content: center;
             align-items: center;
-            z-index: 200;
-            display: none;
+            padding: 20px;
         }
 
         .modal.show {
@@ -647,428 +921,336 @@
         }
 
         .modal-content {
-            background: rgba(30, 30, 30, 0.9);
+            background: rgba(20, 20, 20, 0.95);
             border-radius: 8px;
-            padding: 20px;
-            width: 90%;
-            max-width: 400px;
+            padding: 24px;
+            max-width: 360px;
+            width: 100%;
+            color: var(--text-primary);
             max-height: 80vh;
             overflow-y: auto;
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
         }
 
         .modal-header {
-            font-size: 1.8rem;
-            color: #ff3333;
-            margin-bottom: 20px;
+            font-size: 1.6rem;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .modal-body {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-button {
+            background: var(--primary-color);
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 8px;
+            transition: background 0.3s;
+            text-transform: uppercase;
+            font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
+        }
+
+        .modal-button:hover {
+            background: var(--primary-hover);
         }
 
         .modal-close {
             background: #333;
-            color: #fff;
+            padding: 12px;
             border: none;
-            padding: 10px;
-            border-radius: 4px;
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 1rem;
             cursor: pointer;
             width: 100%;
+            transition: background 0.3s;
+            text-transform: uppercase;
             font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
-            font-size: 1.2rem;
-            margin-top: 10px;
         }
 
         .modal-close:hover {
-            background: #ff3333;
+            background: #444;
         }
 
-        .modal-button {
-            background: #ff3333;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
-            font-size: 1.2rem;
-            margin-top: 10px;
-        }
-
-        .modal-button:hover {
-            background: #ff5555;
-        }
-
-        .history-item {
-            background: rgba(40, 40, 40, 0.9);
+        /* GLOBAL NOTIFICATION */
+        #global-notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--primary-color);
+            color: #000;
+            padding: 12px 16px;
             border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 10px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            max-width: 280px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform: translateX(100%);
+            font-family: 'Bebas Neue', 'Bebas Neue Cyrillic', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .history-date {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-bottom: 5px;
+        #global-notification.show {
+            opacity: 1;
+            transform: translateX(0);
         }
 
-        .history-event {
-            font-size: 1rem;
-            color: #fff;
-            margin-bottom: 5px;
-        }
-
-        .history-details {
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 1200px) {
-            .main-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .bet-coupon {
-                position: relative;
-                top: 0;
-                margin-top: 20px;
-                width: 100%;
-                max-width: 300px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-        }
-
+        /* RESPONSIVE */
         @media (max-width: 1000px) {
-            .matches-grid {
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            .bet-coupon {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                height: auto;
+                max-height: none;
+                border-radius: 0;
+                transform: translateY(100%);
             }
-            
-            .header-right {
-                gap: 10px;
-            }
-            
-            .user-info {
-                gap: 10px;
-                padding: 5px 8px;
-            }
-            
-            .balance-label {
-                font-size: 0.7rem;
-            }
-            
-            .balance-value {
-                font-size: 1rem;
-            }
-            
-            .user-name {
-                font-size: 0.9rem;
-                padding: 3px 8px;
-            }
-            
-            nav ul {
-                gap: 10px;
-            }
-            
-            nav ul li a {
-                font-size: 1rem;
+
+            .bet-coupon.visible {
+                transform: translateY(0);
             }
         }
 
         @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                height: auto;
-                padding: 10px;
-                gap: 10px;
+            .tg-ready {
+                padding-top: 60px;
             }
-            
-            .header-left, .header-right {
-                width: 100%;
+
+            header {
+                padding: 8px 12px;
+                height: 60px;
+                width: 100vw;
+                left: 0;
+            }
+
+            .header-left {
+                gap: 8px;
+            }
+
+            nav ul {
+                gap: 8px;
+            }
+
+            nav ul li a {
+                font-size: 0.85rem;
+            }
+
+            .header-right {
+                gap: 8px;
+            }
+
+            .user-info {
+                gap: 8px;
+                padding: 4px 8px;
+            }
+
+            .balance-label {
+                font-size: 0.7rem;
+            }
+
+            .balance-value {
+                font-size: 0.9rem;
+            }
+
+            .user-name {
+                font-size: 0.8rem;
+                padding: 3px 6px;
+            }
+
+            .main-container {
+                padding: 12px;
+            }
+
+            .filters-section {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .sport-filters {
                 justify-content: center;
             }
-            
-            .main-container {
-                margin-top: 120px;
-            }
-            
-            .sports-container {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-            
+
             .matches-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
-            
+
+            .match-card {
+                padding: 15px;
+            }
+
+            .match-teams {
+                gap: 15px;
+            }
+
+            .team-logo {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
             .team-name {
-                font-size: 1.1rem;
+                font-size: 1rem;
+                max-width: 100px;
             }
-            
-            .odds-value {
+
+            .match-vs {
                 font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 1.6rem;
+            }
+
+            .modal-content {
+                margin: 16px;
+                padding: 20px;
+                max-width: none;
             }
         }
 
         @media (max-width: 600px) {
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 8px;
+            .page-title {
+                font-size: 2rem;
             }
-            
-            .sport-item {
-                padding: 15px 10px;
+
+            .team-name {
+                font-size: 0.95rem;
+                max-width: 80px;
             }
-            
-            .sport-name {
-                font-size: 1.2rem;
-            }
-            
-            .match-header {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
-            
-            .match-teams {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .team {
-                width: 100%;
-                align-items: center !important;
-                flex-direction: row;
-                justify-content: center;
-            }
-            
-            .team-home {
-                justify-content: flex-start;
-            }
-            
-            .team-away {
-                justify-content: flex-end;
-            }
-            
+
             .match-vs {
-                width: 100%;
-                order: -1;
+                font-size: 1.1rem;
             }
-            
-            .support-button {
-                bottom: 10px;
-                right: 10px;
-                width: 50px;
-                height: 50px;
+
+            .coupon-title {
                 font-size: 1.2rem;
-            }
-            
-            .user-info {
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            .header-right {
-                flex-wrap: wrap;
-                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-left">
-            <img id="logo" src="/IMG/LOGO.svg" alt="EVILBET Logo" class="header-logo" onerror="this.src='https://via.placeholder.com/80?text=LOGO'">
-            <nav>
-                <ul>
-                    <li><a href="index.html">PLAY</a></li>
-                    <li><a href="sport.html">SPORT</a></li>
-                    <li><a href="referal.html">REFERAL</a></li>
-                    <li><a href="index.html">LIVE</a></li>
-                </ul>
-            </nav>
-        </div>
-        
-        <div class="header-right">
-            <div class="user-info">
-                <div class="balance-item">
-                    <div class="balance-label">БАЛАНС</div>
-                    <div class="balance-value" id="balanceDisplay">0.00$</div>
+    <div id="preRegistration" class="tg-ready">
+        <!-- HEADER -->
+        <header>
+            <div class="header-left">
+                <img id="logo" src="/IMG/LOGO.svg" alt="EVILBET Logo" class="header-logo" onerror="this.src='https://via.placeholder.com/70x70/00ff88/121212?text=EVILBET'">
+                <nav>
+                    <ul>
+                        <li><a href="index.html">ИГРАТЬ</a></li>
+                        <li><a href="sport.html">СПОРТ</a></li>
+                        <li><a href="referal.html">РЕФЕРАЛЫ</a></li>
+                        <li><a href="live.html">ЛАЙВ</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="user-info" id="userInfoSection" style="display: none;">
+                    <div class="balance-item">
+                        <div class="balance-label">БАЛАНС</div>
+                        <div class="balance-value" id="balanceDisplay">0.00$</div>
+                    </div>
+                    <div class="user-name" id="userName" onclick="openProfile()">Гость</div>
                 </div>
-                <div class="user-name" id="userName" onclick="openProfile()">ИГРОК_123</div>
+                <div class="auth-buttons" id="authButtonsSection">
+                    <button class="auth-btn login-btn" onclick="showModal('login')">Войти</button>
+                    <button class="auth-btn register-btn" onclick="showModal('register')">Регистрация</button>
+                </div>
+                <div class="notifications">
+                    <button class="notifications-btn" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <div class="notification-count" id="notificationCount">0</div>
+                </div>
+                <button class="deposit-btn" onclick="openDepositModal()">Пополнить</button>
             </div>
-            
-            <div class="notifications">
-                <button class="notifications-btn">
-                    <i class="fas fa-bell"></i>
-                </button>
-                <div class="notification-count">0</div>
-            </div>
-            
-            <a href="https://t.me/MyEvilBetBot" class="contact-btn" id="connectTgBtn">CONNECT TG</a>
-        </div>
-    </header>
+        </header>
 
-    <div class="main-container">
-        <h1 class="page-title">СПОРТ</h1>
-        
-        <!-- Виды спорта -->
-        <div class="sports-container">
-            <div class="sport-item active">
-                <div class="sport-icon">⚽</div>
-                <div class="sport-name">ФУТБОЛ</div>
-            </div>
-            <div class="sport-item">
-                <div class="sport-icon">🏀</div>
-                <div class="sport-name">БАСКЕТБОЛ</div>
-            </div>
-            <div class="sport-item">
-                <div class="sport-icon">🎾</div>
-                <div class="sport-name">ТЕННИС</div>
-            </div>
-            <div class="sport-item">
-                <div class="sport-icon">🏒</div>
-                <div class="sport-name">ХОККЕЙ</div>
-            </div>
-            <div class="sport-item">
-                <div class="sport-icon">🥊</div>
-                <div class="sport-name">БОКС</div>
-            </div>
-            <div class="sport-item">
-                <div class="sport-icon">🏎️</div>
-                <div class="sport-name">АВТОГОНКИ</div>
-            </div>
-            <div class="sport-item">
-                <div class="sport-icon">🎯</div>
-                <div class="sport-name">КИБЕРСПОРТ</div>
-            </div>
-            <div class="sport-item">
-                <div class="sport-icon">🏈</div>
-                <div class="sport-name">АМЕРИКАНСКИЙ ФУТБОЛ</div>
-            </div>
-        </div>
-        
-        <!-- Матчи -->
-        <div class="matches-section">
-            <h2 class="section-title">ФУТБОЛЬНЫЕ МАТЧИ</h2>
-            
-            <div class="date-navigation">
-                <div class="date-title">СЕГОДНЯ, 13 СЕНТЯБРЯ</div>
-                <div class="date-arrows">
-                    <div class="date-arrow">←</div>
-                    <div class="date-arrow">→</div>
+        <div class="main-container">
+            <h1 class="page-title">СПОРТ</h1>
+
+            <!-- FILTERS -->
+            <div class="filters-section">
+                <div class="sport-filters">
+                    <div class="sport-item active" data-sport="football" onclick="filterBySport('football')">
+                        <i class="fas fa-futbol"></i> Футбол
+                    </div>
+                    <div class="sport-item" data-sport="basketball" onclick="filterBySport('basketball')">
+                        <i class="fas fa-basketball-ball"></i> Баскетбол
+                    </div>
+                    <div class="sport-item" data-sport="tennis" onclick="filterBySport('tennis')">
+                        <i class="fas fa-table-tennis"></i> Теннис
+                    </div>
+                    <div class="sport-item" data-sport="esports" onclick="filterBySport('esports')">
+                        <i class="fas fa-gamepad"></i> Киберспорт
+                    </div>
+                </div>
+                
+                <div class="status-filters">
+                    <button class="status-btn active" onclick="filterByStatus('all')">Все</button>
+                    <button class="status-btn" onclick="filterByStatus('upcoming')">Предстоящие</button>
+                    <button class="status-btn" onclick="filterByStatus('live')">Live</button>
+                    <button class="status-btn" onclick="filterByStatus('finished')">Завершённые</button>
+                </div>
+
+                <div class="search-container">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Поиск матчей..." oninput="filterBySearch(this.value)">
+                    <i class="fas fa-search search-icon"></i>
                 </div>
             </div>
-            
-            <div class="matches-grid">
-                <!-- Матч 1 -->
-                <div class="match-card" data-match-id="1">
-                    <div class="match-header">
-                        <div class="match-time">18:45</div>
-                        <div class="match-league">Premier League</div>
-                    </div>
-                    <div class="match-teams">
-                        <div class="team team-home">
-                            <div class="team-logo">M</div>
-                            <div class="team-name">Манчестер Юнайтед</div>
+
+            <!-- MATCHES SECTION -->
+            <div class="matches-section">
+                <div class="date-navigation">
+                    <div class="date-title" id="dateTitle">20 сентября 2025</div>
+                    <div class="date-arrows">
+                        <div class="date-arrow" id="prevDate" onclick="changeDate(-1)">
+                            <i class="fas fa-chevron-left"></i>
                         </div>
-                        <div class="match-vs">VS</div>
-                        <div class="team team-away">
-                            <div class="team-logo">L</div>
-                            <div class="team-name">Ливерпуль</div>
-                        </div>
-                    </div>
-                    <div class="match-odds">
-                        <div class="odds-item" data-event="Манчестер Юнайтед - Ливерпуль" data-bet="П1" data-odds="2.45" data-match-id="1">
-                            <div class="odds-type">П1</div>
-                            <div class="odds-value">2.45</div>
-                        </div>
-                        <div class="odds-item" data-event="Манчестер Юнайтед - Ливерпуль" data-bet="X" data-odds="3.20" data-match-id="1">
-                            <div class="odds-type">X</div>
-                            <div class="odds-value">3.20</div>
-                        </div>
-                        <div class="odds-item" data-event="Манчестер Юнайтед - Ливерпуль" data-bet="П2" data-odds="2.80" data-match-id="1">
-                            <div class="odds-type">П2</div>
-                            <div class="odds-value">2.80</div>
+                        <div class="date-arrow" id="nextDate" onclick="changeDate(1)">
+                            <i class="fas fa-chevron-right"></i>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Матч 2 -->
-                <div class="match-card" data-match-id="2">
-                    <div class="match-header">
-                        <div class="match-time">19:00</div>
-                        <div class="match-league">La Liga</div>
-                    </div>
-                    <div class="match-teams">
-                        <div class="team team-home">
-                            <div class="team-logo">R</div>
-                            <div class="team-name">Реал Мадрид</div>
-                        </div>
-                        <div class="match-vs">VS</div>
-                        <div class="team team-away">
-                            <div class="team-logo">B</div>
-                            <div class="team-name">Барселона</div>
-                        </div>
-                    </div>
-                    <div class="match-odds">
-                        <div class="odds-item" data-event="Реал Мадрид - Барселона" data-bet="П1" data-odds="1.95" data-match-id="2">
-                            <div class="odds-type">П1</div>
-                            <div class="odds-value">1.95</div>
-                        </div>
-                        <div class="odds-item" data-event="Реал Мадрид - Барселона" data-bet="X" data-odds="3.50" data-match-id="2">
-                            <div class="odds-type">X</div>
-                            <div class="odds-value">3.50</div>
-                        </div>
-                        <div class="odds-item" data-event="Реал Мадрид - Барселона" data-bet="П2" data-odds="3.80" data-match-id="2">
-                            <div class="odds-type">П2</div>
-                            <div class="odds-value">3.80</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Матч 3 -->
-                <div class="match-card" data-match-id="3">
-                    <div class="match-header">
-                        <div class="match-time">20:30</div>
-                        <div class="match-league">Bundesliga</div>
-                    </div>
-                    <div class="match-teams">
-                        <div class="team team-home">
-                            <div class="team-logo">B</div>
-                            <div class="team-name">Бавария</div>
-                        </div>
-                        <div class="match-vs">VS</div>
-                        <div class="team team-away">
-                            <div class="team-logo">D</div>
-                            <div class="team-name">Боруссия Дортмунд</div>
-                        </div>
-                    </div>
-                    <div class="match-odds">
-                        <div class="odds-item" data-event="Бавария - Боруссия Дортмунд" data-bet="П1" data-odds="1.75" data-match-id="3">
-                            <div class="odds-type">П1</div>
-                            <div class="odds-value">1.75</div>
-                        </div>
-                        <div class="odds-item" data-event="Бавария - Боруссия Дортмунд" data-bet="X" data-odds="3.80" data-match-id="3">
-                            <div class="odds-type">X</div>
-                            <div class="odds-value">3.80</div>
-                        </div>
-                        <div class="odds-item" data-event="Бавария - Боруссия Дортмунд" data-bet="П2" data-odds="4.20" data-match-id="3">
-                            <div class="odds-type">П2</div>
-                            <div class="odds-value">4.20</div>
-                        </div>
-                    </div>
+                <h2 class="section-title" id="sectionTitle">ФУТБОЛ МАТЧИ</h2>
+                <div class="matches-grid" id="matchesGrid">
+                    <!-- Матчи будут загружены динамически -->
                 </div>
             </div>
         </div>
 
-        <!-- Купон ставок -->
-        <div class="bet-coupon">
+        <!-- BET COUPON -->
+        <div class="bet-coupon" id="betCoupon">
+            <button class="coupon-close" onclick="closeCoupon()">&times;</button>
             <div class="coupon-tabs">
-                <button class="coupon-tab active" data-tab="bets">Ставки</button>
-                <button class="coupon-tab" data-tab="history">История</button>
+                <button class="coupon-tab active" data-tab="bets" onclick="switchCouponTab('bets')">Ставки</button>
+                <button class="coupon-tab" data-tab="history" onclick="switchCouponTab('history')">История</button>
             </div>
             <div class="coupon-header">
                 <div class="coupon-title">КУПОН</div>
-                <button class="clear-coupon">Очистить</button>
+                <button class="clear-coupon" onclick="clearCoupon()">Очистить</button>
             </div>
             <div class="coupon-items" id="couponItems">
                 <div class="coupon-empty">Выберите события для ставки</div>
@@ -1079,7 +1261,7 @@
             <div class="coupon-total">
                 <div class="total-row">
                     <div class="total-label">Сумма ставки:</div>
-                    <input type="number" class="stake-input" id="stakeInput" placeholder="0.00" min="1">
+                    <input type="number" class="stake-input" id="stakeInput" placeholder="0.00" min="1" step="0.01" oninput="updateCoupon()">
                 </div>
                 <div class="total-row">
                     <div class="total-label">Коэффициент:</div>
@@ -1089,130 +1271,813 @@
                     <div class="total-label">Выигрыш:</div>
                     <div class="total-value" id="potentialWin">0.00</div>
                 </div>
-                <button class="place-bet-btn" id="placeBetBtn" disabled>СДЕЛАТЬ СТАВКУ</button>
+                <button class="place-bet-btn" id="placeBetBtn" onclick="placeBet()" disabled>СДЕЛАТЬ СТАВКУ</button>
             </div>
         </div>
-    </div>
 
-    <!-- Кнопка поддержки -->
-    <div class="support-button">
-        <i class="fas fa-headset"></i>
-    </div>
+        <!-- SUPPORT BUTTON -->
+        <div class="support-button" onclick="openSupportModal()">
+            <i class="fas fa-headset"></i>
+        </div>
 
-    <!-- Модалка профиля -->
-    <div id="profileModal" class="modal">
-        <div class="modal-content">
-            <h2 class="modal-header">Профиль</h2>
-            <div class="modal-body">
-                <p>Имя: <span id="profileName">ИГРОК_123</span></p>
-                <p>Баланс: <span id="profileBalance">0.00$</span></p>
+        <!-- MODALS -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="hideModal('login')">&times;</span>
+                <h2 class="modal-header">Вход через Telegram</h2>
+                <div class="modal-body">
+                    <p style="text-align: center; margin-bottom: 20px;">Для входа необходимо авторизоваться через Telegram</p>
+                    <button class="modal-button" onclick="connectTelegram()">
+                        <i class="fab fa-telegram"></i> Войти через Telegram
+                    </button>
+                </div>
+                <button class="modal-close" onclick="hideModal('login')">Закрыть</button>
             </div>
-            <button class="modal-button" onclick="openHistory()">История ставок</button>
-            <button class="modal-close" onclick="closeProfile()">Закрыть</button>
         </div>
+
+        <div id="registerModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="hideModal('register')">&times;</span>
+                <h2 class="modal-header">Регистрация через Telegram</h2>
+                <div class="modal-body">
+                    <p style="text-align: center; margin-bottom: 20px;">Для регистрации необходимо подключить Telegram аккаунт</p>
+                    <button class="modal-button" onclick="connectTelegram()">
+                        <i class="fab fa-telegram"></i> Зарегистрироваться через Telegram
+                    </button>
+                </div>
+                <button class="modal-close" onclick="hideModal('register')">Закрыть</button>
+            </div>
+        </div>
+
+        <div id="profileModal" class="modal">
+            <div class="modal-content">
+                <h2 class="modal-header">Профиль</h2>
+                <div class="modal-body">
+                    <p>Имя: <span id="profileName">Гость</span></p>
+                    <p>Баланс: <span id="profileBalance">0.00$</span></p>
+                </div>
+                <button class="modal-button" onclick="openHistory()">История ставок</button>
+                <button class="modal-button" onclick="openDepositModal()">Пополнить баланс</button>
+                <button class="modal-button" onclick="performLogout()">Выйти</button>
+                <button class="modal-close" onclick="closeProfile()">Закрыть</button>
+            </div>
+        </div>
+
+        <div id="historyModal" class="modal">
+            <div class="modal-content">
+                <h2 class="modal-header">История ставок</h2>
+                <div id="betHistoryList" class="modal-body"></div>
+                <button class="modal-close" onclick="closeHistory()">Закрыть</button>
+            </div>
+        </div>
+
+        <div id="depositModal" class="modal">
+            <div class="modal-content">
+                <h2 class="modal-header">Пополнение баланса</h2>
+                <div class="modal-body">
+                    <div class="deposit-methods" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+                        <div class="deposit-method active" data-method="card" style="flex: 1 1 100px; background: rgba(255,255,255,0.05); border-radius: 6px; padding: 12px; text-align: center; cursor: pointer; border: 1px solid #444;">
+                            <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: var(--text-primary); margin-bottom: 6px;">
+                                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10zm-2-1h-6v-2h6v2zM6 10h2v2H6v-2z"/>
+                            </svg>
+                            <span>Карта</span>
+                        </div>
+                        <div class="deposit-method" data-method="crypto" style="flex: 1 1 100px; background: rgba(255,255,255,0.05); border-radius: 6px; padding: 12px; text-align: center; cursor: pointer; border: 1px solid #444;">
+                            <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: var(--text-primary); margin-bottom: 6px;">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                            </svg>
+                            <span>Крипто</span>
+                        </div>
+                    </div>
+                    <div class="deposit-amount">
+                        <label for="depositAmount" style="font-size: 1rem; color: var(--text-secondary); margin-bottom: 8px; display: block;">Сумма ($):</label>
+                        <input type="number" id="depositAmount" placeholder="0.00" min="1" step="0.01" style="background: rgba(255,255,255,0.05); border: 1px solid #444; border-radius: 6px; padding: 12px; color: var(--text-primary); font-size: 1rem; width: 100%;">
+                    </div>
+                </div>
+                <button class="modal-button" onclick="processDeposit()">Пополнить</button>
+                <button class="modal-close" onclick="closeDepositModal()">Закрыть</button>
+            </div>
+        </div>
+
+        <div id="supportModal" class="modal">
+            <div class="modal-content">
+                <h2 class="modal-header">Чат с поддержкой</h2>
+                <div class="modal-body">
+                    <div class="support-chat" id="supportChat" style="height: 280px; overflow-y: auto; border: 1px solid #444; border-radius: 6px; padding: 12px; background: rgba(30,30,30,0.5); margin-bottom: 12px;"></div>
+                    <div class="chat-input-container" style="display: flex; gap: 8px;">
+                        <textarea class="chat-input" id="chatInput" placeholder="Введите ваше сообщение" rows="2" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #444; border-radius: 6px; padding: 12px; color: var(--text-primary); font-size: 0.95rem; resize: none; font-family: 'Bebas Neue', sans-serif; min-height: 50px;"></textarea>
+                        <button class="chat-send-btn" onclick="sendSupportMessage()" style="background: var(--primary-color); border: none; border-radius: 6px; color: #000; padding: 12px 16px; cursor: pointer; font-size: 0.95rem; height: 50px; text-transform: uppercase;">Отправить</button>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeSupportModal()">Закрыть</button>
+            </div>
+        </div>
+
+        <div id="global-notification"></div>
     </div>
 
-    <!-- Модалка истории ставок -->
-    <div id="historyModal" class="modal">
-        <div class="modal-content">
-            <h2 class="modal-header">История ставок</h2>
-            <div id="betHistoryList" class="modal-body"></div>
-            <button class="modal-close" onclick="closeHistory()">Закрыть</button>
-        </div>
-    </div>
-
-    <script src="coupon-manager.js"></script>
     <script>
+        // Глобальные переменные
+        const TelegramWebApp = window.Telegram?.WebApp;
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let balance = parseFloat(localStorage.getItem('balance')) || 0;
+        let couponItems = JSON.parse(localStorage.getItem('couponItems')) || [];
+        let betHistory = JSON.parse(localStorage.getItem('betHistory')) || [];
+        let supportMessages = JSON.parse(localStorage.getItem('supportMessages')) || [];
+        
+        // Фильтры
+        let currentSport = 'football';
+        let currentStatus = 'all';
+        let currentDate = new Date();
+        let searchQuery = '';
+
+        // Инициализация
         document.addEventListener('DOMContentLoaded', () => {
-            // Инициализация купона
-            initCoupon();
-            updateBalance();
-            highlightSelectedOdds();
-
-            // Обработчик клика по коэффициентам
-            document.querySelectorAll('.odds-item').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const event = this.getAttribute('data-event');
-                    const bet = this.getAttribute('data-bet');
-                    const odds = this.getAttribute('data-odds');
-                    const matchId = this.getAttribute('data-match-id');
-                    const added = addToCoupon(event, bet, odds, matchId);
-                    if (added) {
-                        this.classList.add('selected');
-                        document.querySelector('.bet-coupon').classList.add('visible');
-                        showNotification(`Добавлено в купон: ${event} - ${bet} (${odds})`);
-                    } else {
-                        removeFromCouponByEvent(event, bet, matchId);
-                        this.classList.remove('selected');
-                        if (!isCouponNotEmpty()) {
-                            document.querySelector('.bet-coupon').classList.remove('visible');
-                        }
-                    }
-                });
-            });
-
-            // Обработчик вкладок купона
-            document.querySelectorAll('.coupon-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.coupon-tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    const tabId = tab.getAttribute('data-tab');
-                    document.getElementById('couponItems').style.display = tabId === 'bets' ? 'block' : 'none';
-                    document.getElementById('couponHistory').style.display = tabId === 'history' ? 'block' : 'none';
-                    document.querySelector('.coupon-total').style.display = tabId === 'bets' ? 'block' : 'none';
-                    document.querySelector('.coupon-header').style.display = tabId === 'bets' ? 'flex' : 'none';
-                    if (tabId === 'history') {
-                        updateCouponHistory();
-                    }
-                });
-            });
-
-            // Обработчик выбора вида спорта
-            document.querySelectorAll('.sport-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    document.querySelectorAll('.sport-item').forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    const sportName = this.querySelector('.sport-name').textContent;
-                    document.querySelector('.section-title').textContent = `${sportName} МАТЧИ`;
-                });
-            });
-
-            // Обработчик навигации по датам
-            document.querySelectorAll('.date-arrow').forEach(arrow => {
-                arrow.addEventListener('click', function() {
-                    const currentTitle = document.querySelector('.date-title').textContent;
-                    console.log('Переключение даты:', currentTitle);
-                });
-            });
-
-            // Обработчик уведомлений
-            document.querySelector('.notifications-btn').addEventListener('click', () => {
-                showNotification('Уведомления пока не реализованы');
-                document.querySelector('.notification-count').textContent = '0';
-            });
+            console.log('DOM loaded - Sport page');
+            initApp();
         });
 
-        // Модалка профиля
+        function initApp() {
+            if (TelegramWebApp) {
+                TelegramWebApp.ready();
+                TelegramWebApp.expand();
+                applyTheme();
+                document.getElementById('connectTgBtn')?.remove();
+            }
+
+            updateAuthUI();
+            updateBalance();
+            initCoupon();
+            loadMatches();
+            setupEventListeners();
+        }
+
+        function applyTheme() {
+            if (TelegramWebApp?.themeParams) {
+                document.body.style.background = `linear-gradient(135deg, ${TelegramWebApp.themeParams.bg_color || '#121212'}, ${TelegramWebApp.themeParams.secondary_bg_color || '#1a1a1a'})`;
+            }
+        }
+
+        // АВТОРИЗАЦИЯ
+        function connectTelegram() {
+            if (TelegramWebApp?.initDataUnsafe?.user) {
+                const user = TelegramWebApp.initDataUnsafe.user;
+                isLoggedIn = true;
+                currentUser = {
+                    id: user.id,
+                    username: user.username || user.first_name || 'User_' + user.id,
+                    firstName: user.first_name || '',
+                    lastName: user.last_name || ''
+                };
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateAuthUI();
+                updateBalance();
+                showNotification(`Добро пожаловать, ${currentUser.username}!`);
+                hideModal('login');
+                hideModal('register');
+                TelegramWebApp.HapticFeedback.impactOccurred('medium');
+            } else {
+                showNotification('Не удалось авторизоваться через Telegram');
+            }
+        }
+
+        function updateAuthUI() {
+            const userInfoSection = document.getElementById('userInfoSection');
+            const authButtonsSection = document.getElementById('authButtonsSection');
+            const userNameElement = document.getElementById('userName');
+
+            if (isLoggedIn && currentUser) {
+                userInfoSection.style.display = 'flex';
+                authButtonsSection.style.display = 'none';
+                userNameElement.textContent = currentUser.username;
+                document.getElementById('profileName').textContent = currentUser.username;
+            } else {
+                userInfoSection.style.display = 'none';
+                authButtonsSection.style.display = 'flex';
+            }
+        }
+
+        function performLogout() {
+            isLoggedIn = false;
+            currentUser = null;
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('currentUser');
+            updateAuthUI();
+            updateBalance();
+            showNotification('Вы вышли из аккаунта');
+            closeProfile();
+        }
+
         function openProfile() {
-            document.getElementById('profileModal').classList.add('show');
-            updateBetHistory();
+            if (!isLoggedIn) {
+                showModal('login');
+                return;
+            }
+            document.getElementById('profileBalance').textContent = `${balance.toFixed(2)}$`;
+            showModal('profile');
         }
 
         function closeProfile() {
-            document.getElementById('profileModal').classList.remove('show');
+            hideModal('profile');
         }
 
-        // Модалка истории ставок
+        // КУПОН
+        function initCoupon() {
+            updateCoupon();
+            if (couponItems.length > 0) {
+                document.getElementById('betCoupon').classList.add('visible');
+            }
+            document.getElementById('stakeInput').addEventListener('input', updateCoupon);
+        }
+
+        function addToCoupon(event, bet, odds, matchId) {
+            const existingIndex = couponItems.findIndex(item => 
+                item.event === event && item.bet === bet && item.matchId === matchId
+            );
+            
+            if (existingIndex !== -1) {
+                // Уже есть - удаляем
+                couponItems.splice(existingIndex, 1);
+                showNotification(`Удалено из купона: ${bet}`);
+                TelegramWebApp?.HapticFeedback.impactOccurred('light');
+                return false;
+            }
+            
+            // Добавляем
+            couponItems.push({ event, bet, odds: parseFloat(odds), matchId });
+            localStorage.setItem('couponItems', JSON.stringify(couponItems));
+            showNotification(`Добавлено в купон: ${bet} (${odds})`);
+            TelegramWebApp?.HapticFeedback.impactOccurred('medium');
+            document.getElementById('betCoupon').classList.add('visible');
+            return true;
+        }
+
+        function removeFromCoupon(index) {
+            const removedItem = couponItems[index];
+            couponItems.splice(index, 1);
+            localStorage.setItem('couponItems', JSON.stringify(couponItems));
+            updateCoupon();
+            highlightSelectedOdds();
+            if (couponItems.length === 0) {
+                document.getElementById('betCoupon').classList.remove('visible');
+            }
+            showNotification(`Удалена ставка: ${removedItem.bet}`);
+            TelegramWebApp?.HapticFeedback.impactOccurred('light');
+        }
+
+        function clearCoupon() {
+            couponItems = [];
+            localStorage.setItem('couponItems', JSON.stringify(couponItems));
+            document.getElementById('betCoupon').classList.remove('visible');
+            updateCoupon();
+            highlightSelectedOdds();
+            showNotification('Купон очищен');
+            TelegramWebApp?.HapticFeedback.notificationOccurred('error');
+        }
+
+        function closeCoupon() {
+            document.getElementById('betCoupon').classList.remove('visible');
+        }
+
+        function switchCouponTab(tab) {
+            document.querySelectorAll('.coupon-tab').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const couponItems = document.getElementById('couponItems');
+            const couponHistory = document.getElementById('couponHistory');
+            const couponTotal = document.querySelector('.coupon-total');
+            const couponHeader = document.querySelector('.coupon-header');
+            
+            if (tab === 'bets') {
+                couponItems.style.display = 'block';
+                couponHistory.style.display = 'none';
+                couponTotal.style.display = 'block';
+                couponHeader.style.display = 'flex';
+            } else {
+                couponItems.style.display = 'none';
+                couponHistory.style.display = 'block';
+                couponTotal.style.display = 'none';
+                couponHeader.style.display = 'flex';
+                updateCouponHistory();
+            }
+        }
+
+        function updateCoupon() {
+            const couponItemsEl = document.getElementById('couponItems');
+            const totalOddsEl = document.getElementById('totalOdds');
+            const potentialWinEl = document.getElementById('potentialWin');
+            const placeBetBtn = document.getElementById('placeBetBtn');
+            const stakeInput = document.getElementById('stakeInput');
+
+            couponItemsEl.innerHTML = '';
+            if (couponItems.length === 0) {
+                couponItemsEl.innerHTML = '<div class="coupon-empty">Выберите события для ставки</div>';
+                totalOddsEl.textContent = '1.00';
+                potentialWinEl.textContent = '0.00';
+                placeBetBtn.disabled = true;
+                return;
+            }
+
+            couponItems.forEach((item, index) => {
+                const couponItem = document.createElement('div');
+                couponItem.className = 'coupon-item';
+                couponItem.innerHTML = `
+                    <div class="coupon-event">${item.event}</div>
+                    <div class="coupon-bet">${item.bet}</div>
+                    <div class="coupon-odds">
+                        <div class="odds-number">${item.odds.toFixed(2)}</div>
+                        <button class="remove-bet" onclick="removeFromCoupon(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                couponItemsEl.appendChild(couponItem);
+            });
+
+            const totalOdds = couponItems.reduce((acc, item) => acc * item.odds, 1).toFixed(2);
+            const stake = parseFloat(stakeInput.value) || 0;
+            const potentialWin = (stake * totalOdds).toFixed(2);
+            
+            totalOddsEl.textContent = totalOdds;
+            potentialWinEl.textContent = potentialWin;
+            placeBetBtn.disabled = !isLoggedIn || stake <= 0 || couponItems.length === 0 || stake > balance;
+        }
+
+        function placeBet() {
+            if (!isLoggedIn) {
+                showModal('login');
+                showNotification('Войдите, чтобы сделать ставку');
+                return;
+            }
+
+            const stake = parseFloat(document.getElementById('stakeInput').value);
+            if (stake <= 0 || isNaN(stake)) {
+                showNotification('Введите корректную сумму ставки');
+                return;
+            }
+
+            if (stake > balance) {
+                showNotification('Недостаточно средств на балансе');
+                return;
+            }
+
+            const totalOdds = couponItems.reduce((acc, item) => acc * item.odds, 1).toFixed(2);
+            const potentialWin = (stake * totalOdds).toFixed(2);
+
+            const bet = {
+                date: new Date().toISOString(),
+                events: couponItems.map(item => `${item.event} - ${item.bet}`),
+                bet: couponItems.map(item => item.bet).join(', '),
+                odds: totalOdds,
+                stake: stake,
+                potentialWin: potentialWin,
+                status: 'pending'
+            };
+
+            betHistory.push(bet);
+            localStorage.setItem('betHistory', JSON.stringify(betHistory));
+            balance -= stake;
+            localStorage.setItem('balance', balance);
+            
+            updateBalance();
+            showNotification('Ставка успешно размещена!');
+            clearCoupon();
+            updateCouponHistory();
+            TelegramWebApp?.HapticFeedback.notificationOccurred('success');
+        }
+
+        function updateCouponHistory() {
+            const historyEl = document.getElementById('couponHistory');
+            historyEl.innerHTML = '';
+            
+            if (betHistory.length === 0) {
+                historyEl.innerHTML = '<div class="coupon-empty">Нет ставок</div>';
+                return;
+            }
+
+            betHistory.slice(-10).reverse().forEach(bet => {
+                const item = document.createElement('div');
+                item.className = 'coupon-item';
+                item.innerHTML = `
+                    <div class="coupon-event">${bet.events.join(', ')}</div>
+                    <div class="coupon-bet">Ставка: ${bet.stake}$ | Коэф: ${bet.odds}</div>
+                    <div class="coupon-odds">
+                        <div class="odds-number">${bet.potentialWin}$</div>
+                        <div style="color: ${bet.status === 'won' ? '#4caf50' : bet.status === 'lost' ? '#ff4444' : '#aaa'}">${bet.status === 'pending' ? 'Ожидание' : bet.status === 'won' ? 'Выигрыш' : 'Проигрыш'}</div>
+                    </div>
+                `;
+                historyEl.appendChild(item);
+            });
+        }
+
+        function updateBalance() {
+            document.getElementById('balanceDisplay').textContent = `${balance.toFixed(2)}$`;
+            document.getElementById('profileBalance').textContent = `${balance.toFixed(2)}$`;
+        }
+
+        // МАТЧИ
+        function loadMatches() {
+            const matches = generateMockMatches(currentSport);
+            renderMatches(matches);
+            document.getElementById('sectionTitle').textContent = `${currentSport.toUpperCase()} МАТЧИ`;
+            document.getElementById('dateTitle').textContent = currentDate.toLocaleDateString('ru-RU');
+        }
+
+        function generateMockMatches(sport) {
+            const baseDate = new Date(currentDate);
+            const matchesBySport = {
+                football: [
+                    { 
+                        id: Date.now() + Math.random(), 
+                        time: '18:45', 
+                        league: 'Premier League', 
+                        home: 'Манчестер Юнайтед', 
+                        away: 'Ливерпуль', 
+                        status: 'upcoming',
+                        odds: { p1: 2.50, x: 3.20, p2: 2.80 },
+                        date: new Date(baseDate.setHours(18, 45)).toISOString()
+                    },
+                    { 
+                        id: Date.now() + Math.random(), 
+                        time: '20:15', 
+                        league: 'La Liga', 
+                        home: 'Реал Мадрид', 
+                        away: 'Барселона', 
+                        status: 'live',
+                        odds: { p1: 1.95, x: 3.75, p2: 3.85 },
+                        score: '1:0',
+                        date: new Date(baseDate.setHours(20, 15)).toISOString()
+                    },
+                    { 
+                        id: Date.now() + Math.random(), 
+                        time: '16:30', 
+                        league: 'Bundesliga', 
+                        home: 'Бавария', 
+                        away: 'Боруссия Д', 
+                        status: 'finished',
+                        odds: { p1: 2.10, x: 3.50, p2: 3.20 },
+                        score: '2:1',
+                        date: new Date(baseDate.setHours(16, 30)).toISOString()
+                    }
+                ],
+                basketball: [
+                    { 
+                        id: Date.now() + Math.random(), 
+                        time: '19:00', 
+                        league: 'NBA', 
+                        home: 'Лос-Анджелес Лейкерс', 
+                        away: 'Бостон Селтикс', 
+                        status: 'upcoming',
+                        odds: { p1: 1.85, x: 4.00, p2: 2.05 },
+                        date: new Date(baseDate.setHours(19, 0)).toISOString()
+                    }
+                ],
+                tennis: [
+                    { 
+                        id: Date.now() + Math.random(), 
+                        time: '14:00', 
+                        league: 'ATP Tour', 
+                        home: 'Новак Джокович', 
+                        away: 'Карлос Алькарас', 
+                        status: 'upcoming',
+                        odds: { p1: 1.75, x: 4.20, p2: 2.25 },
+                        date: new Date(baseDate.setHours(14, 0)).toISOString()
+                    }
+                ]
+                // Добавь другие виды спорта...
+            };
+            
+            return (matchesBySport[sport] || []).filter(match => {
+                const matchDate = new Date(match.date);
+                const searchMatch = searchQuery.toLowerCase();
+                const dateMatch = matchDate.toDateString() === currentDate.toDateString();
+                const statusMatch = currentStatus === 'all' || match.status === currentStatus;
+                const textMatch = !searchQuery || 
+                    match.home.toLowerCase().includes(searchMatch) || 
+                    match.away.toLowerCase().includes(searchMatch) ||
+                    match.league.toLowerCase().includes(searchMatch);
+                
+                return dateMatch && statusMatch && textMatch;
+            });
+        }
+
+        function renderMatches(matches) {
+            const grid = document.getElementById('matchesGrid');
+            grid.innerHTML = '';
+            
+            if (matches.length === 0) {
+                grid.innerHTML = '<div class="no-matches">Нет матчей по вашим критериям</div>';
+                return;
+            }
+
+            matches.forEach(match => {
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.dataset.matchId = match.id;
+                card.onclick = () => openMatchDetails(match);
+                
+                const statusBadge = match.status === 'live' ? 
+                    '<div style="position: absolute; top: 10px; right: 10px; background: #ff4444; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem;">LIVE</div>' : 
+                    match.status === 'finished' ? 
+                    '<div style="position: absolute; top: 10px; right: 10px; background: #4caf50; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem;">FT</div>' : '';
+
+                card.innerHTML = `
+                    ${statusBadge}
+                    <div class="match-header">
+                        <div class="match-time">${match.time}</div>
+                        <div class="match-league">${match.league}</div>
+                    </div>
+                    ${match.status === 'finished' ? `<div style="text-align: center; margin-bottom: 10px; font-size: 1.2rem; color: var(--primary-color);">${match.score}</div>` : ''}
+                    <div class="match-teams">
+                        <div class="team">
+                            <div class="team-logo">${match.home.charAt(0)}</div>
+                            <div class="team-name">${match.home}</div>
+                        </div>
+                        <div class="match-vs">VS</div>
+                        <div class="team">
+                            <div class="team-logo">${match.away.charAt(0)}</div>
+                            <div class="team-name">${match.away}</div>
+                        </div>
+                    </div>
+                    <div class="match-odds">
+                        <div class="odds-item" data-event="${match.home} vs ${match.away}" data-bet="П1" data-odds="${match.odds.p1}" data-match-id="${match.id}">
+                            <div class="odds-type">П1</div>
+                            <div class="odds-value">${match.odds.p1.toFixed(2)}</div>
+                        </div>
+                        <div class="odds-item" data-event="${match.home} vs ${match.away}" data-bet="X" data-odds="${match.odds.x}" data-match-id="${match.id}">
+                            <div class="odds-type">X</div>
+                            <div class="odds-value">${match.odds.x.toFixed(2)}</div>
+                        </div>
+                        <div class="odds-item" data-event="${match.home} vs ${match.away}" data-bet="П2" data-odds="${match.odds.p2}" data-match-id="${match.id}">
+                            <div class="odds-type">П2</div>
+                            <div class="odds-value">${match.odds.p2.toFixed(2)}</div>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+                
+                // Добавляем обработчики для коэффициентов
+                card.querySelectorAll('.odds-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const event = item.dataset.event;
+                        const bet = item.dataset.bet;
+                        const odds = parseFloat(item.dataset.odds);
+                        const matchId = item.dataset.matchId;
+                        
+                        const added = addToCoupon(event, bet, odds, matchId);
+                        item.classList.toggle('selected', added);
+                        updateCoupon();
+                    });
+                });
+            });
+            
+            highlightSelectedOdds();
+        }
+
+        function openMatchDetails(match) {
+            // Сохраняем данные матча для match-events.html
+            const matchData = {
+                id: match.id,
+                time: match.time,
+                league: match.league,
+                teamHome: match.home,
+                teamAway: match.away,
+                status: match.status,
+                odds: match.odds
+            };
+            localStorage.setItem('selectedMatch', JSON.stringify(matchData));
+            
+            // Переход на страницу матча
+            if (TelegramWebApp) {
+                TelegramWebApp.showAlert('Открытие деталей матча...');
+                setTimeout(() => {
+                    window.location.href = 'match-events.html';
+                }, 500);
+            } else {
+                window.location.href = 'match-events.html';
+            }
+            
+            TelegramWebApp?.HapticFeedback.impactOccurred('medium');
+        }
+
+        function highlightSelectedOdds() {
+            document.querySelectorAll('.odds-item').forEach(item => {
+                const event = item.dataset.event;
+                const bet = item.dataset.bet;
+                const matchId = item.dataset.matchId;
+                const exists = couponItems.find(c => 
+                    c.event === event && c.bet === bet && c.matchId == matchId
+                );
+                item.classList.toggle('selected', !!exists);
+            });
+        }
+
+        // ФИЛЬТРЫ
+        function filterBySport(sport) {
+            document.querySelectorAll('.sport-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+            currentSport = sport;
+            loadMatches();
+            TelegramWebApp?.HapticFeedback.selectionChanged();
+        }
+
+        function filterByStatus(status) {
+            document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            currentStatus = status;
+            loadMatches();
+            TelegramWebApp?.HapticFeedback.selectionChanged();
+        }
+
+        function filterBySearch(query) {
+            searchQuery = query;
+            loadMatches();
+        }
+
+        function changeDate(direction) {
+            currentDate.setDate(currentDate.getDate() + direction);
+            loadMatches();
+            TelegramWebApp?.HapticFeedback.impactOccurred('light');
+        }
+
+        // МОДАЛЬНЫЕ ОКНА
+        function showModal(modalId) {
+            document.getElementById(`${modalId}Modal`).classList.add('show');
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(`${modalId}Modal`).classList.remove('show');
+        }
+
+        function showNotification(message) {
+            if (TelegramWebApp) {
+                TelegramWebApp.showAlert(message);
+            } else {
+                const notification = document.getElementById('global-notification');
+                notification.textContent = message;
+                notification.classList.add('show');
+                setTimeout(() => notification.classList.remove('show'), 3000);
+            }
+        }
+
+        // ДЕПОЗИТ
+        function openDepositModal() {
+            if (!isLoggedIn) {
+                showModal('login');
+                return;
+            }
+            showModal('deposit');
+            
+            // Обработчики для методов оплаты
+            document.querySelectorAll('.deposit-method').forEach(method => {
+                method.onclick = () => {
+                    document.querySelectorAll('.deposit-method').forEach(m => m.classList.remove('active'));
+                    method.classList.add('active');
+                };
+            });
+        }
+
+        function processDeposit() {
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            if (!amount || amount <= 0) {
+                showNotification('Введите корректную сумму');
+                return;
+            }
+            
+            const method = document.querySelector('.deposit-method.active')?.dataset.method || 'card';
+            balance += amount;
+            localStorage.setItem('balance', balance);
+            updateBalance();
+            showNotification(`Баланс пополнен на ${amount}$ через ${method}`);
+            closeDepositModal();
+            TelegramWebApp?.HapticFeedback.notificationOccurred('success');
+        }
+
+        function closeDepositModal() {
+            hideModal('deposit');
+        }
+
+        // ПОДДЕРЖКА
+        function openSupportModal() {
+            if (!isLoggedIn) {
+                showModal('login');
+                return;
+            }
+            updateSupportChat();
+            showModal('support');
+        }
+
+        function sendSupportMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            supportMessages.push({
+                text: message,
+                time: new Date().toLocaleTimeString('ru-RU'),
+                sender: currentUser?.username || 'Гость',
+                type: 'user'
+            });
+            
+            localStorage.setItem('supportMessages', JSON.stringify(supportMessages));
+            input.value = '';
+            updateSupportChat();
+            
+            // Симуляция ответа
+            setTimeout(() => {
+                supportMessages.push({
+                    text: 'Спасибо за сообщение! Мы ответим в ближайшее время.',
+                    time: new Date().toLocaleTimeString('ru-RU'),
+                    sender: 'Support',
+                    type: 'support'
+                });
+                localStorage.setItem('supportMessages', JSON.stringify(supportMessages));
+                updateSupportChat();
+            }, 1500);
+        }
+
+        function updateSupportChat() {
+            const chat = document.getElementById('supportChat');
+            chat.innerHTML = '';
+            
+            supportMessages.forEach(msg => {
+                const messageEl = document.createElement('div');
+                messageEl.className = `chat-message ${msg.type}`;
+                messageEl.innerHTML = `
+                    <div class="message-text">${msg.text}</div>
+                    <div class="message-time">${msg.time} - ${msg.sender}</div>
+                `;
+                chat.appendChild(messageEl);
+            });
+            
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function closeSupportModal() {
+            hideModal('support');
+        }
+
+        // ИСТОРИЯ СТАВОК
         function openHistory() {
-            document.getElementById('profileModal').classList.remove('show');
-            document.getElementById('historyModal').classList.add('show');
-            updateBetHistory();
+            updateHistoryUI();
+            showModal('history');
+        }
+
+        function updateHistoryUI() {
+            const historyList = document.getElementById('betHistoryList');
+            historyList.innerHTML = betHistory.length === 0 ? 
+                '<div style="text-align: center; color: var(--text-secondary);">История ставок пуста</div>' : '';
+                
+            betHistory.slice(-10).reverse().forEach(bet => {
+                const item = document.createElement('div');
+                item.style = 'background: rgba(40,40,40,0.9); border-radius: 6px; padding: 12px; margin-bottom: 8px; border: 1px solid #444;';
+                item.innerHTML = `
+                    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px;">${new Date(bet.date).toLocaleString('ru-RU')}</div>
+                    <div style="font-size: 0.95rem; margin-bottom: 6px; color: var(--text-primary);">${bet.events.join(', ')}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                        Ставка: ${bet.stake}$ | Коэффициент: ${bet.odds} | Возможный выигрыш: ${bet.potentialWin}$<br>
+                        Статус: <span style="color: ${bet.status === 'won' ? '#4caf50' : bet.status === 'lost' ? '#ff4444' : '#aaa'}">${bet.status === 'pending' ? 'Ожидание' : bet.status}</span>
+                    </div>
+                `;
+                historyList.appendChild(item);
+            });
         }
 
         function closeHistory() {
-            document.getElementById('historyModal').classList.remove('show');
+            hideModal('history');
         }
+
+        // SETUP EVENT LISTENERS
+        function setupEventListeners() {
+            document.querySelector('.notifications-btn').onclick = () => {
+                showNotification('Уведомления пока недоступны');
+            };
+
+            // Обработчики модальных окон
+            document.querySelectorAll('.close').forEach(closeBtn => {
+                closeBtn.onclick = (e) => {
+                    const modalId = e.target.closest('.modal').id.replace('Modal', '');
+                    hideModal(modalId);
+                };
+            });
+
+            // Закрытие модалок по клику вне контента
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.onclick = (e) => {
+                    if (e.target === modal) {
+                        const modalId = modal.id.replace('Modal', '');
+                        hideModal(modalId);
+                    }
+                };
+            });
+        }
+
+        // Инициализация при загрузке
+        initApp();
     </script>
 </body>
 </html>
